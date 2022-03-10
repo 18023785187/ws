@@ -1,0 +1,17 @@
+{
+  "name": "ws_service",
+  "version": "1.0.0",
+  "description": "websocket即时聊天室",
+  "main": "docs.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "node docs.js"
+  },
+  "keywords": [
+    "websocket",
+    "service",
+    "client"
+  ],
+  "author": "",
+  "license": "ISC"
+}
