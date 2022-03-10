@@ -10,6 +10,7 @@
     "@types/node": "^16.11.25",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
+    "antd": "^4.19.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
@@ -42,6 +43,8 @@
   },
   "devDependencies": {
     "customize-cra": "^1.0.0",
+    "less": "^4.1.2",
+    "less-loader": "^10.2.0",
     "react-app-rewired": "^2.2.1"
   },
   "config-overrides-path": "./scripts/overrides"
