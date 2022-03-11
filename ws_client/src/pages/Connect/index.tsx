@@ -62,7 +62,7 @@ function Connect() {
     return (
         <div className={`${style['connect']} clearfix`}>
             <div className='connect-content'>
-                <h2 className='connect-title'>即时聊天室</h2>
+                <h2 className='connect-title'>HYM即时聊天室</h2>
                 <Input
                     size='large'
                     placeholder="请输入服务器地址"

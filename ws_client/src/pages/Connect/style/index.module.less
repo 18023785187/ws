@@ -2,7 +2,7 @@
 .connect {
     :global {
         width: 80%;
-        margin: 25vh auto;
+        margin: 20vh auto;
         
         .connect-content {
 
@@ -11,17 +11,15 @@
             }
 
             .connect-title {
+                font-size: 10vw;
+                font-weight: 700;
                 text-align: center;
-                animation: title 2s;
-            }
-
-            @keyframes title {
-                from {
-                    color: rgba(0, 0, 0, 0.85);
-                }
-                to {
-                    color: rgb(24, 144, 255);
-                }
+                color: transparent;
+                -webkit-background-clip: text;
+                background-clip: text;
+                background-image: url('~assets/img/wave.gif');
+                background-size: 80vw 80vw;
+                background-position: 0 -28vw;
             }
         }   
     }
