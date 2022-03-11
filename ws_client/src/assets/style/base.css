@@ -1,0 +1,16 @@
+@import url('./normalize.css');
+
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+/*
+    用于清除浮动
+*/
+.clearfix::before,
+.clearfix::after {
+    content: '';
+    display: table;
+    clear: both;
+}

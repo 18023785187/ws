@@ -1,11 +1,11 @@
 import React from 'react'
-import Connect from 'components/Connect';
+import AppRoutes from './route'
 
 
 function App() {
   return (
-    <div className="App">
-      <Connect />
+    <div className="App clearfix">
+      <AppRoutes />
     </div>
   );
 }

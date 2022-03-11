@@ -1,0 +1,28 @@
+
+.connect {
+    :global {
+        width: 80%;
+        margin: 25vh auto;
+        
+        .connect-content {
+
+            & > * {
+                margin: 2vh 0;
+            }
+
+            .connect-title {
+                text-align: center;
+                animation: title 2s;
+            }
+
+            @keyframes title {
+                from {
+                    color: rgba(0, 0, 0, 0.85);
+                }
+                to {
+                    color: rgb(24, 144, 255);
+                }
+            }
+        }   
+    }
+}

@@ -11,6 +11,7 @@ function aliasConfig(config) {
         ...config.resolve.alias,
         "@": path.resolve('./', 'src'),
         "components": "@/components",
+        "pages": "@/pages",
         "assets": "@/assets",
         "api": "@/api",
         "utils": "@/utils",
