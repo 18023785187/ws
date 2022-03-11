@@ -2,7 +2,7 @@
 class Ws {
     public ws?: WebSocket
     constructor() {
-
+        console.log('createWebSocket')
     }
     /**
      * 创建一个webSocket实例
