@@ -1,10 +1,12 @@
 /**
  * 链接页
  */
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input, Select, Button, message } from 'antd'
 import Ws from 'utils/ws'
+import Controller from 'utils/cesium'
+import waveImg from 'assets/img/wave.gif'
 import style from './style/index.module.less'
 
 const Option = Select.Option
@@ -18,6 +20,47 @@ function Connect() {
     const [inputValue, setInputValue] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
+    // viewer元素
+    const viewerRef = useRef<HTMLDivElement>(null)
+
+    // 初始化cesium
+    useEffect(() => {
+        const controller = new Controller(viewerRef.current as HTMLDivElement, true)
+        const { scene } = controller.viewer
+        controller.clearDefaultStyle()
+
+        // 如果为true，则允许用户平移地图。如果为假，相机将保持锁定在当前位置。此标志仅适用于2D和Columbus视图模式。
+        scene.screenSpaceCameraController.enableTranslate = false;
+        // 如果为真，允许用户放大和缩小。如果为假，相机将锁定到距离椭圆体的当前距离
+        scene.screenSpaceCameraController.enableZoom = false;
+        // 如果为真，则允许用户倾斜相机。如果为假，相机将锁定到当前标题。这个标志只适用于3D和哥伦布视图。
+        scene.screenSpaceCameraController.enableTilt = false;
+
+        controller.addHtmlElementToMap(
+            [0, 0],
+            {
+                tag: 'div',
+                innerHTML: 'HYM即时聊天室',
+                style: `
+                    position: absolute;
+                    width: 50vw;
+                    font-size: 6vw;
+                    font-weight: 700;
+                    text-align: center;
+                    color: transparent;
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    background-image: url('${waveImg}');
+                    background-size: 80vw 80vw;
+                    background-position: 0 -28vw;
+                `
+            }
+        )
+
+        return () => {
+            controller.destroy()
+        }
+    }, [])
 
     // 链接
     const connect = () => {
@@ -62,7 +105,7 @@ function Connect() {
     return (
         <div className={`${style['connect']} clearfix`}>
             <div className='connect-content'>
-                <h2 className='connect-title'>即时聊天室</h2>
+                <div className='connect-title' ref={viewerRef}></div>
                 <Input
                     size='large'
                     placeholder="请输入服务器地址"

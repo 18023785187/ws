@@ -39,7 +39,7 @@ wss.on('connection', (ws) => {
     })
 })
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8080
 const host = getNetworkIp()
 
 app.get('/', function (req, res) {
