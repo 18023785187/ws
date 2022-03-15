@@ -1,9 +1,6 @@
 
 class Ws {
     public ws?: WebSocket
-    constructor() {
-
-    }
     /**
      * 创建一个webSocket实例
      * @param url ws服务器地址 
@@ -56,7 +53,5 @@ class Ws {
     //     console.log('连接关闭');
     // };
 }
-
-
 
 export default new Ws()
