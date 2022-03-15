@@ -53,7 +53,7 @@ class Controller {
             innerHTML: string,
             style: string,
             event?: {
-                [propName: string]: ((e: Event) => {})[]
+                [propName: string]: ((e?: Event) => void)[]
             }
         }
     ): void {

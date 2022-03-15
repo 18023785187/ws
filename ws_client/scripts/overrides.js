@@ -1,7 +1,5 @@
 const path = require('path')
 const { override } = require('customize-cra')
-const webpack = require('webpack')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = override(
     aliasConfig,

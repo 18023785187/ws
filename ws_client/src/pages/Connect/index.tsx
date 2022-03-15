@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom'
 import { Input, Select, Button, message } from 'antd'
 import Ws from 'utils/ws'
 import Controller from 'utils/cesium'
+import { GeoJsonDataSource, Entity, Color, Cartesian3 } from 'cesium'
+import { geoJson } from '@/constants/geoJson'
+import { positions } from '@/constants/positions'
 import waveImg from 'assets/img/wave.gif'
 import style from './style/index.module.less'
 
@@ -36,26 +39,65 @@ function Connect() {
         // 如果为真，则允许用户倾斜相机。如果为假，相机将锁定到当前标题。这个标志只适用于3D和哥伦布视图。
         scene.screenSpaceCameraController.enableTilt = false;
 
+        // 标题
         controller.addHtmlElementToMap(
-            [0, 0],
+            [...positions.ZHONG_GUO],
             {
                 tag: 'div',
                 innerHTML: 'HYM即时聊天室',
                 style: `
                     position: absolute;
+                    transform: translate3d(-50%, -100%, 0);
                     width: 50vw;
                     font-size: 6vw;
                     font-weight: 700;
                     text-align: center;
                     color: transparent;
+                    -webkit-text-stroke: 1px #aaa;
                     -webkit-background-clip: text;
                     background-clip: text;
                     background-image: url('${waveImg}');
                     background-size: 80vw 80vw;
                     background-position: 0 -28vw;
-                `
+                `,
+                event: {
+                    click: [() => console.log('666')]
+                }
             }
         )
+            ; (controller.el.getElementsByClassName('cesium-viewer')[0] as HTMLElement).style.overflow = 'visible'
+
+        // 加载geojson数据源
+        const promise: Promise<GeoJsonDataSource> = GeoJsonDataSource.load(geoJson.ZHONG_GUO)
+        promise
+            .then((dataSource: GeoJsonDataSource) => {
+                controller.viewer.dataSources.add(dataSource)
+                // Entity实体，这条代码会拿到Entity实体，当前实体信息是每个省和直辖市的各种信息
+                const entities: Entity[] = dataSource.entities.values;
+                for (let i = 0; i < entities.length; ++i) {
+                    // 获取实体
+                    const entity: Entity = entities[i];
+                    // 获取实体的name
+                    const name: string | undefined = entity.name;
+                    // 如果有name，那么给这个Entity加一个随机颜色
+                    if (name) {
+                        // 将轮廓颜色设置为我们定义的颜色
+                        (entity.polygon as any).material = Color.fromRandom({
+                            // 使用要使用的alpha分量代替随机值
+                            alpha: 1.0,
+                        });
+                        // 删除实体的轮廓线
+                        (entity.polygon as any).outline = false;
+                        // 根据adcode调整地图板块高度
+                        (entity.polygon as any).extrudedHeight = entity.properties!.adcode
+                    }
+                }
+        
+                // 视图聚焦到中国
+                controller.viewer.scene.camera.flyTo({
+                    destination: Cartesian3.fromDegrees(...positions.ZHONG_GUO, 11000000)
+                })
+            })
 
         return () => {
             controller.destroy()
