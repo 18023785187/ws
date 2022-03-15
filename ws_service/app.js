@@ -39,13 +39,13 @@ wss.on('connection', (ws) => {
     })
 })
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8000
 const host = getNetworkIp()
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'public/index.html'))
 })
-console.log()
+
 //监听端口
 server.listen(port, host, () => {
     console.log(`服务器跑起来了~ @ http://${host}:${port}`)

@@ -1,10 +1,16 @@
 /**
  * 链接页
  */
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input, Select, Button, message } from 'antd'
 import Ws from 'utils/ws'
+import Controller from 'utils/cesium'
+import { GeoJsonDataSource, Entity, Color, Cartesian3 } from 'cesium'
+import { geoJson } from '@/constants/geoJson'
+import { positions } from '@/constants/positions'
+import { WS_SERVICE_URL, CONNECT_TOKEN } from '@/constants/sessionStorage'
+import waveImg from 'assets/img/wave.gif'
 import style from './style/index.module.less'
 
 const Option = Select.Option
@@ -18,6 +24,89 @@ function Connect() {
     const [inputValue, setInputValue] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
+    // viewer元素
+    const viewerRef = useRef<HTMLDivElement>(null)
+
+    // 初始化cesium
+    useEffect(() => {
+        window.sessionStorage.removeItem(WS_SERVICE_URL)
+        window.sessionStorage.setItem(CONNECT_TOKEN, 'false')
+
+        const controller = new Controller(viewerRef.current as HTMLDivElement, true)
+        const { scene } = controller.viewer
+        controller.clearDefaultStyle()
+
+        // 如果为true，则允许用户平移地图。如果为假，相机将保持锁定在当前位置。此标志仅适用于2D和Columbus视图模式。
+        scene.screenSpaceCameraController.enableTranslate = false;
+        // 如果为真，允许用户放大和缩小。如果为假，相机将锁定到距离椭圆体的当前距离
+        scene.screenSpaceCameraController.enableZoom = false;
+        // 如果为真，则允许用户倾斜相机。如果为假，相机将锁定到当前标题。这个标志只适用于3D和哥伦布视图。
+        scene.screenSpaceCameraController.enableTilt = false;
+
+        // 标题
+        controller.addHtmlElementToMap(
+            [...positions.ZHONG_GUO],
+            {
+                tag: 'div',
+                innerHTML: 'HYM即时聊天室',
+                style: `
+                    position: absolute;
+                    transform: translate3d(-50%, -100%, 0);
+                    width: 50vw;
+                    font-size: 6vw;
+                    font-weight: 700;
+                    text-align: center;
+                    color: transparent;
+                    -webkit-text-stroke: 1px #aaa;
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    background-image: url('${waveImg}');
+                    background-size: 80vw 80vw;
+                    background-position: 0 -28vw;
+                `,
+                event: {
+                    click: [() => console.log('666')]
+                }
+            }
+        )
+            ; (controller.el.getElementsByClassName('cesium-viewer')[0] as HTMLElement).style.overflow = 'visible'
+
+        // 加载geojson数据源
+        const promise: Promise<GeoJsonDataSource> = GeoJsonDataSource.load(geoJson.ZHONG_GUO)
+        promise
+            .then((dataSource: GeoJsonDataSource) => {
+                controller.viewer.dataSources.add(dataSource)
+                // Entity实体，这条代码会拿到Entity实体，当前实体信息是每个省和直辖市的各种信息
+                const entities: Entity[] = dataSource.entities.values;
+                for (let i = 0; i < entities.length; ++i) {
+                    // 获取实体
+                    const entity: Entity = entities[i];
+                    // 获取实体的name
+                    const name: string | undefined = entity.name;
+                    // 如果有name，那么给这个Entity加一个随机颜色
+                    if (name) {
+                        // 将轮廓颜色设置为我们定义的颜色
+                        (entity.polygon as any).material = Color.fromRandom({
+                            // 使用要使用的alpha分量代替随机值
+                            alpha: 1.0,
+                        });
+                        // 删除实体的轮廓线
+                        (entity.polygon as any).outline = false;
+                        // 根据adcode调整地图板块高度
+                        (entity.polygon as any).extrudedHeight = entity.properties!.adcode
+                    }
+                }
+
+                // 视图聚焦到中国
+                controller.viewer.scene.camera.flyTo({
+                    destination: Cartesian3.fromDegrees(...positions.ZHONG_GUO, 11000000)
+                })
+            })
+
+        return () => {
+            controller.destroy()
+        }
+    }, [])
 
     // 链接
     const connect = () => {
@@ -31,15 +120,21 @@ function Connect() {
             url,
             (e) => {
                 setLoading(false)
-                message.success('连接成功', 2, () => navigate('/setting'))
+                message.success('连接成功', 2, () => {
+                    window.sessionStorage.setItem(WS_SERVICE_URL, url)
+                    window.sessionStorage.setItem(CONNECT_TOKEN, 'true')
+                    navigate('/setting')
+                })
             },
             (e) => {
                 setLoading(false)
                 message.error('连接失败，请重新连接')
+                window.sessionStorage.setItem(CONNECT_TOKEN, 'false')
             },
             () => {
                 setLoading(false)
                 message.error('连接超时，请重新连接')
+                window.sessionStorage.setItem(CONNECT_TOKEN, 'false')
             }
         )
     }
@@ -51,7 +146,7 @@ function Connect() {
     // 选择协议组件
     const SelectBefore = useMemo(
         () => (
-            <Select defaultValue="ws://" style={{ width: 80 }} onChange={(val) => { setProtocol(val) }}>
+            <Select defaultValue="ws://" style={{ width: '25vw' }} onChange={(val) => { setProtocol(val) }}>
                 <Option value="ws://">ws://</Option>
                 <Option value="wss://">wss://</Option>
             </Select>
@@ -62,7 +157,7 @@ function Connect() {
     return (
         <div className={`${style['connect']} clearfix`}>
             <div className='connect-content'>
-                <h2 className='connect-title'>HYM即时聊天室</h2>
+                <div className='connect-title' ref={viewerRef}></div>
                 <Input
                     size='large'
                     placeholder="请输入服务器地址"

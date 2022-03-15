@@ -1,0 +1,30 @@
+.setting {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+
+    :global {
+        .avatar-uploader,
+        .avatar-uploader-trigger,
+        .avatar {
+            width: 20vh;
+            height: 20vh;
+        }
+
+        .avatar-uploader {
+            display: block;
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .avatar-uploader-trigger {
+            display: table-cell;
+            vertical-align: middle;
+            font-size: 5vh;
+            color: #999;
+        }
+    }
+}

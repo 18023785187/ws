@@ -1,9 +1,6 @@
 
 class Ws {
     public ws?: WebSocket
-    constructor() {
-        console.log('createWebSocket')
-    }
     /**
      * 创建一个webSocket实例
      * @param url ws服务器地址 
@@ -18,11 +15,13 @@ class Ws {
         const initOpen = (e: Event) => {
             window.clearTimeout(timer)
             ws.removeEventListener('open', initOpen)
+            ws.removeEventListener('error', initError)
             this.ws = ws
             onResolve ? onResolve(e) : (() => { })()
         }
         // 失败回调
         const initError = (e: Event) => {
+            ws.removeEventListener('open', initOpen)
             ws.removeEventListener('error', initError)
             onRejected ? onRejected(e) : (() => { })()
         }
@@ -56,7 +55,5 @@ class Ws {
     //     console.log('连接关闭');
     // };
 }
-
-
 
 export default new Ws()
