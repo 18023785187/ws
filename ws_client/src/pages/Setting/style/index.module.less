@@ -6,25 +6,41 @@
     align-items: center;
 
     :global {
-        .avatar-uploader,
-        .avatar-uploader-trigger,
-        .avatar {
-            width: 20vh;
-            height: 20vh;
-        }
 
-        .avatar-uploader {
-            display: block;
-            border: 1px dashed #d9d9d9;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+        .setting-content {
 
-        .avatar-uploader-trigger {
-            display: table-cell;
-            vertical-align: middle;
-            font-size: 5vh;
-            color: #999;
+            .setting-title {
+                font-size: 3vh;
+                text-align: center;
+            }
+
+            .avatar-uploader,
+            .avatar-uploader-trigger,
+            .avatar {
+                width: 20vh;
+                height: 20vh;
+                margin: 5vh auto;
+            }
+    
+            .avatar-uploader {
+                display: block;
+                border: 1px dashed #d9d9d9;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+    
+            .avatar-uploader-trigger {
+                display: table-cell;
+                vertical-align: middle;
+                font-size: 5vh;
+                color: #999;
+            }
+
+            .setting-button {
+                display: flex;
+                justify-content: space-between;
+                margin: 3vh 0;
+            }
         }
     }
 }
