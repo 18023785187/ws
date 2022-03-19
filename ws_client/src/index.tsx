@@ -1,10 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { message } from 'antd'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import './cesium.config'
 import 'antd/dist/antd.css'
 import 'assets/style/base.css'
+
+message.config({
+  maxCount: 1
+})
 
 ReactDOM.render(
   <React.StrictMode>

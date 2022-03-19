@@ -1,64 +1,103 @@
 import { useState, useEffect } from 'react'
-import { Upload, Input, Tooltip, Button } from 'antd'
-import { PlusOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons'
-import Ws from 'utils/ws'
-import { WS_SERVICE_URL, CONNECT_TOKEN } from '@/constants/sessionStorage'
+import { useNavigate } from 'react-router-dom'
+import { Input, Tooltip, Button, Avatar, message } from 'antd'
+import { PlusOutlined, InfoCircleOutlined, UserOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import Ws, { WsEvent } from 'utils/ws'
+import { WS_SERVICE_URL, CONNECT_TOKEN, USER_INFO } from '@/constants/sessionStorage'
 import style from './style/index.module.less'
 
 function Setting() {
+    const navigate = useNavigate()
 
-    useEffect(() => {
-        const url = window.sessionStorage.getItem(WS_SERVICE_URL)!
-        Ws.createWebSocket(
-            url,
-            (e) => {
-
-            },
-            (e) => {
-                window.sessionStorage.setItem(CONNECT_TOKEN, 'false')
-            },
-            () => {
-                window.sessionStorage.setItem(CONNECT_TOKEN, 'false')
-            }
-        )
-    }, [])
-
+    const [name, setName] = useState<string>('')
     const [imageUrl, setImageUrl] = useState<string | null>(null)
 
-    const handleChange = (info: any) => {
-        if (info.file.status === 'done') {
-            // Get this url from response in real world.
-            getBase64(info.file.originFileObj, imageUrl => setImageUrl(imageUrl))
+    useEffect(() => {
+        Ws.ws?.addEventListener('message', wsMessageEvent)
+
+        function wsMessageEvent(e: MessageEvent) {
+            const { type, data } = JSON.parse(e.data)
+            if (type === WsEvent.CONNECT) {
+                if (data) {
+                    message.success('正在进入房间中...', 2, () => {
+                        const userInfo = {
+                            name,
+                            imageUrl
+                        }
+                        window.sessionStorage.setItem(USER_INFO, JSON.stringify(userInfo))
+                        navigate('/room')
+                    })
+                } else {
+                    message.error('当前名字已被注册，请重新选择')
+                }
+            }
+        }
+
+        return () => {
+            Ws.ws?.removeEventListener('message', wsMessageEvent)
+        }
+    }, [name, imageUrl])
+
+    // 换头像事件
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const reads = new FileReader()
+        reads.readAsDataURL(e.target.files![0])
+        reads.onload = function (e) {
+            setImageUrl(this.result as string)
         }
     }
-
-    function getBase64(img: Blob, callback: (result: string | null) => void): void {
-        const reader = new FileReader()
-        reader.addEventListener('load', () => callback(reader.result as string | null))
-        reader.readAsDataURL(img)
-    }
-
+    // 退出连接
     const exit = () => {
         window.sessionStorage.removeItem(WS_SERVICE_URL)
         window.sessionStorage.setItem(CONNECT_TOKEN, 'false')
+        navigate('/')
+    }
+    // 进入连接
+    const emit = () => {
+        if (!name) {
+            message.error('请输入姓名')
+            return
+        }
+        Ws.connectSend({
+            name,
+            imageUrl
+        })
     }
 
     return (
         <div className={style['setting']}>
             <div className='setting-content'>
                 <p className='setting-title'>请设置你的头像与姓名</p>
-                <Upload
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    // action="//jsonplaceholder.typicode.com/posts/"
-                    onChange={handleChange}
-                >
-                    {
-                        imageUrl ?
-                            <img src={imageUrl} alt="" className="avatar" /> :
-                            <PlusOutlined className="avatar-uploader-trigger" />
-                    }
-                </Upload>
+                {/* 头像 */}
+                <div className="avatar-uploader">
+                    <div className='avatar-uploader-box'>
+                        <div className='avatar-file'>
+                            <input
+                                className='avatar-file-input'
+                                type="file"
+                                accept="image/*"
+                                onChange={handleChange}
+                            >
+                            </input>
+                        </div>
+                        {
+                            imageUrl ?
+                                <img src={imageUrl} alt="头像" className="avatar" /> :
+                                name ?
+                                    <Avatar className='avatar-uploader-trigger avatar-uploader-trigger-2' size="large">{name}</Avatar> :
+                                    <PlusOutlined className="avatar-uploader-trigger avatar-uploader-trigger-1" />
+                        }
+                    </div>
+                    <CloseCircleOutlined
+                        className='avatar-close'
+                        title='取消头像选择'
+                        style={{
+                            display: imageUrl ? '' : 'none'
+                        }}
+                        onClick={() => setImageUrl(null)}
+                    />
+                </div>
+                {/* 输入姓名 */}
                 <Input
                     size="large"
                     placeholder="请输入你的姓名"
@@ -68,6 +107,8 @@ function Setting() {
                             <InfoCircleOutlined style={{ color: 'rgba(0,0,0,.45)' }} />
                         </Tooltip>
                     }
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
                 />
                 <div className='setting-button'>
                     <Button
@@ -87,6 +128,7 @@ function Setting() {
                             flex: 1,
                             marginLeft: 5
                         }}
+                        onClick={emit}
                     >进入连接</Button>
                 </div>
             </div>

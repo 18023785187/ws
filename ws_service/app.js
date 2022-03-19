@@ -2,7 +2,8 @@ const path = require('path')
 const app = require('express')()
 const http = require('http')
 const WebSocket = require('ws')
-const getNetworkIp = require('./utils/getNetworkIp')
+const Event = require('./event')
+const { sendTemp, getNetworkIp } = require('./utils')
 
 const server = http.createServer(app)
 
@@ -11,14 +12,21 @@ const wss = new WebSocket.Server({
 })
 
 wss.on('connection', (ws) => {
-    
+    console.log(wss)
     // 监听客户端发来的消息
     ws.on('message', (message) => {
-        // console.log(Object.prototype.toString.call(message))
-        // console.log(String.fromCharCode.apply(null, new Uint8Array(message)))
-        // if(String.fromCharCode.apply(null, new Uint8Array(message)) === 'IS_HYM_WEB_SOCKET?') {
-        //     ws.send()
-        // }
+        message = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(message)))
+        const { type, data } = message
+        switch (type) {
+            case Event.CONNECT:
+                connectHandle(ws, data)
+                break
+            case Event.MESSAGE:
+
+                break
+            default:
+                break
+        }
         // let msgData = JSON.parse(message)
         // if (msgData.type === 'open') {
         //     // 初始连接时标识会话
@@ -35,18 +43,38 @@ wss.on('connection', (ws) => {
 
     // 连接关闭
     ws.on('close', () => {
-        console.log('连接关闭')
+        // console.log('连接关闭')
     })
 })
-
-const port = process.env.PORT || 8000
-const host = getNetworkIp()
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'public/index.html'))
 })
 
 //监听端口
+const port = process.env.PORT || 8000
+const host = getNetworkIp()
 server.listen(port, host, () => {
     console.log(`服务器跑起来了~ @ http://${host}:${port}`)
 })
+
+// 连接处理事件
+function connectHandle(target, data) {
+    const { name, imageUrl } = data
+    for(const ws of wss.clients) {
+        if(ws.name === name) {
+            target.send(sendTemp(
+                Event.CONNECT,
+                false
+            ))
+            return
+        }
+    }
+    
+    target.send(sendTemp(
+        Event.CONNECT,
+        true
+    ))
+    target.name = name
+    target.imageUrl = imageUrl
+}

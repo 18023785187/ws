@@ -2,8 +2,11 @@
 const WS_SERVICE_URL = 'ws_service_url'
 // 连接标识
 const CONNECT_TOKEN = 'connect_token'
+// 用户信息
+const USER_INFO = 'user_info'
 
 export {
     WS_SERVICE_URL,
-    CONNECT_TOKEN
+    CONNECT_TOKEN,
+    USER_INFO,
 }

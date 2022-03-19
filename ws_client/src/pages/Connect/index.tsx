@@ -15,10 +15,6 @@ import style from './style/index.module.less'
 
 const Option = Select.Option
 
-message.config({
-    maxCount: 1
-})
-
 function Connect() {
     const [protocol, setProtocol] = useState<string>('ws://')
     const [inputValue, setInputValue] = useState<string>('')
