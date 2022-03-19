@@ -1,20 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="WebSocket即时聊天室"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>HTM即时聊天室</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="WebSocket即时聊天室" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <title>HTM即时聊天室</title>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+  <script>
+    function addDarkmodeWidget() {
+      const options = {
+        bottom: '-64px', // default: '32px'
+        right: '-64px', // default: '32px'
+        // left: '32px', // default: 'unset'
+        // time: '0.5s', // default: '0.3s'
+        // mixColor: '#fff', // default: '#fff'
+        // backgroundColor: '#fff',  // default: '#fff'
+        // buttonColorDark: '#100f2c',  // default: '#100f2c'
+        // buttonColorLight: '#fff', // default: '#fff'
+        // saveInCookies: false, // default: true,
+        // label: '🌓', // default: ''
+        // autoMatchOsTheme: true // default: true
+      }
+      new Darkmode(options).showWidget();
+    }
+    window.addEventListener('load', addDarkmodeWidget);
+  </script>
+  <style>
+    .darkmode-toggle {
+      position: absolute;
+      top: -9999px;
+    }
+  </style>
+</body>
+
 </html>

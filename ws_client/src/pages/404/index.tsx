@@ -3,6 +3,7 @@ import { Result, Button } from 'antd'
 import { Link } from "react-router-dom"
 
 const Page404: FC = () => {
+
   return (
     <Result
       status="404"

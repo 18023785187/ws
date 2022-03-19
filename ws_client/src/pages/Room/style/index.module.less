@@ -1,4 +1,13 @@
+@import url('./nav_bar.less');
 
 .room {
-    
+    width: 100vw;
+    height: 100vh;
+    background-color: #fafafa;
+
+    :global {
+        .nav-bar {
+            .nav-bar();
+        }
+    }
 }

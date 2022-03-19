@@ -3,7 +3,7 @@ const app = require('express')()
 const http = require('http')
 const WebSocket = require('ws')
 const Event = require('./event')
-const { sendTemp, getNetworkIp } = require('./utils')
+const { sendTemp, getNetworkIp, arrayBufferToStr } = require('./utils')
 
 const server = http.createServer(app)
 
@@ -12,10 +12,10 @@ const wss = new WebSocket.Server({
 })
 
 wss.on('connection', (ws) => {
-    console.log(wss)
     // 监听客户端发来的消息
     ws.on('message', (message) => {
-        message = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(message)))
+        // 对message过大的情况下采取分块传输
+        message = JSON.parse(arrayBufferToStr(message))
         const { type, data } = message
         switch (type) {
             case Event.CONNECT:
@@ -61,8 +61,8 @@ server.listen(port, host, () => {
 // 连接处理事件
 function connectHandle(target, data) {
     const { name, imageUrl } = data
-    for(const ws of wss.clients) {
-        if(ws.name === name) {
+    for (const ws of wss.clients) {
+        if (ws.name === name) {
             target.send(sendTemp(
                 Event.CONNECT,
                 false
@@ -70,7 +70,7 @@ function connectHandle(target, data) {
             return
         }
     }
-    
+
     target.send(sendTemp(
         Event.CONNECT,
         true
