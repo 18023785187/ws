@@ -18,7 +18,7 @@ function AuthRoute({ element }: { element: JSX.Element }) {
     if (!connect_token) {
       navigate(redirect.current)
     }
-  }, [connect_token])
+  }, [connect_token, navigate])
   return connect_token ? element : null
 }
 

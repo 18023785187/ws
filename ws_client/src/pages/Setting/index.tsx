@@ -36,7 +36,7 @@ function Setting() {
         return () => {
             Ws.ws?.removeEventListener('message', wsMessageEvent)
         }
-    }, [name, imageUrl])
+    }, [name, imageUrl, navigate])
 
     // 换头像事件
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
