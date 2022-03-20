@@ -29,6 +29,7 @@ function Input() {
                 className='textarea'
                 size='large'
                 autoSize={{ minRows: 1, maxRows: 5 }}
+                maxLength={200}
                 value={message}
                 onChange={inputChange}
                 onPressEnter={send}

@@ -10,7 +10,7 @@ class Ws {
     public ws?: WebSocket
     constructor() {
         const url = window.sessionStorage.getItem(WS_SERVICE_URL)
-        if (!JSON.parse(window.sessionStorage.getItem(DISCONNECT) ?? '') && url) {
+        if (!JSON.parse(window.sessionStorage.getItem(DISCONNECT) ?? 'false') && url) {
             this.createWebSocket(
                 url,
                 (e) => {
