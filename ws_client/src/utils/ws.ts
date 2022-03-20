@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import { WS_SERVICE_URL, CONNECT_TOKEN } from '@/constants/sessionStorage'
+import { WS_SERVICE_URL, CONNECT_TOKEN, DISCONNECT } from '@/constants/sessionStorage'
 
 enum WsEvent {
     CONNECT = 'connect',
@@ -10,7 +10,7 @@ class Ws {
     public ws?: WebSocket
     constructor() {
         const url = window.sessionStorage.getItem(WS_SERVICE_URL)
-        if (url) {
+        if (!JSON.parse(window.sessionStorage.getItem(DISCONNECT) ?? '') && url) {
             this.createWebSocket(
                 url,
                 (e) => {
@@ -24,6 +24,7 @@ class Ws {
                 }
             )
         } else {
+            window.sessionStorage.setItem(DISCONNECT, 'false')
             auth()
         }
     }
@@ -45,6 +46,15 @@ class Ws {
             window.clearTimeout(timer)
             ws.removeEventListener('open', initOpen)
             ws.removeEventListener('error', initError)
+            ws.addEventListener('close', (e) => {
+                if (!e.wasClean) {
+                    message.error('连接意外断开', 2, () => {
+                        window.sessionStorage.setItem(DISCONNECT, 'true')
+                        window.location.assign('/')
+                    })
+                }
+                this.ws = undefined
+            })
             this.ws = ws
             onResolve ? onResolve(e) : (() => { })()
         }
@@ -68,7 +78,7 @@ class Ws {
      * @param info 信息，一般是一个对象
      */
     public send(type: WsEvent, info: any): void {
-        if(!this.ws) {
+        if (!this.ws) {
             throw new Error('未连接WebSrocket！！')
         }
         this.ws.send(JSON.stringify({
@@ -85,6 +95,13 @@ class Ws {
         imageUrl: string | null
     }): void {
         this.send(WsEvent.CONNECT, info)
+    }
+
+    /**
+     * 
+     */
+    public disconnect(): void {
+        this.ws = undefined
     }
 
     // const ws = new WebSocket('ws://' + inputValue)

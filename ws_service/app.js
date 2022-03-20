@@ -12,6 +12,7 @@ const wss = new WebSocket.Server({
 })
 
 wss.on('connection', (ws) => {
+    console.log(wss.clients.size)
     // 监听客户端发来的消息
     ws.on('message', (message) => {
         // 对message过大的情况下采取分块传输
@@ -62,6 +63,7 @@ server.listen(port, host, () => {
 function connectHandle(target, data) {
     const { name, imageUrl } = data
     for (const ws of wss.clients) {
+        console.log(ws.name)
         if (ws.name === name) {
             target.send(sendTemp(
                 Event.CONNECT,

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { Input, Select, Button, message } from 'antd'
 import Ws from 'utils/ws'
 import Controller from 'utils/cesium'
+import clearToken from 'utils/clearToken'
 import { GeoJsonDataSource, Entity, Color, Cartesian3 } from 'cesium'
 import { geoJson } from '@/constants/geoJson'
 import { positions } from '@/constants/positions'
@@ -23,11 +24,14 @@ function Connect() {
     // viewer元素
     const viewerRef = useRef<HTMLDivElement>(null)
 
+    // 每次进入该页面都会断开之前的连接
+    useEffect(() => {
+        Ws.ws?.close()
+        clearToken()
+    }, [])
+
     // 初始化cesium
     useEffect(() => {
-        window.sessionStorage.removeItem(WS_SERVICE_URL)
-        window.sessionStorage.setItem(CONNECT_TOKEN, 'false')
-
         const controller = new Controller(viewerRef.current as HTMLDivElement, true)
         const { scene } = controller.viewer
         controller.clearDefaultStyle()
@@ -59,9 +63,10 @@ function Connect() {
                     background-image: url('${waveImg}');
                     background-size: 80vw 80vw;
                     background-position: 0 -28vw;
+                    cursor: pointer;
                 `,
                 event: {
-                    click: [() => console.log('666')]
+                    click: [() => (document.getElementsByClassName('darkmode-toggle')[0] as HTMLElement)?.click()]
                 }
             }
         )

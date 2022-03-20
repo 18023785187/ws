@@ -1,5 +1,9 @@
+
 import { useState, useEffect, MouseEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { message } from 'antd'
+import Ws from 'utils/ws'
+import clearToken from 'utils/clearToken'
 
 const settingStyleTemp = [
     {
@@ -17,8 +21,8 @@ function NavBar() {
     const navigate = useNavigate()
     // 设置按钮逻辑
     const [settingStyle, setSettingStyle] = useState(settingStyleTemp)
-    const [flag, setFlag] = useState<boolean>(!!window.localStorage.getItem('darkmode'))
-    const [darkmode, setDarkmode] = useState<boolean>(false)
+    const [flag, setFlag] = useState<boolean>(true)
+    const [darkmode, setDarkmode] = useState<boolean>(JSON.parse(window.localStorage.getItem('darkmode') || 'false'))
 
     useEffect(() => {
         window.addEventListener('mousedown', mousedown)
@@ -54,7 +58,12 @@ function NavBar() {
         setDarkmode(!darkmode)
     }
     const exit = (e: MouseEvent) => {
-        navigate('/')
+        setFlag(true)
+        message.success('退出中...', 2, () => {
+            Ws.ws?.close()
+            clearToken()
+            navigate('/')
+        })
     }
 
     return (
@@ -67,7 +76,7 @@ function NavBar() {
                     <div className="right-icon-line-2" style={settingStyle[1]}></div>
                     <div className="right-icon-line-3" style={settingStyle[2]}></div>
                 </div>
-                <div className='pop-up' style={{ display: flag ? 'none' : '' }} onMouseDown={(e) => e.stopPropagation()}>
+                <div className='pop-up' style={flag ? { transform: 'scale(0, 0)' } : {}} onMouseDown={(e) => e.stopPropagation()}>
                     <div className='pop-up-item' onClick={mode}>{darkmode ? '白天模式' : '黑夜模式'}</div>
                     <div className='pop-up-item' onClick={exit}>退出房间</div>
                 </div>

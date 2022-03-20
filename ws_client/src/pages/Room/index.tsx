@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { USER_INFO } from '@/constants/sessionStorage'
 import NavBar from './NavBar'
+import Content from './Content'
+import Input from './Input'
 import style from './style/index.module.less'
 
 function Room() {
@@ -18,6 +20,8 @@ function Room() {
     return (
         <div className={style['room']}>
             <NavBar />
+            <Content />
+            <Input />
         </div>
     )
 }

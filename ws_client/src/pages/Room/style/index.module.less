@@ -1,13 +1,27 @@
 @import url('./nav_bar.less');
+@import url('./content.less');
+@import url('./input.less');
 
 .room {
+    display: flex;
+    flex-direction: column;
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
     background-color: #fafafa;
 
     :global {
         .nav-bar {
             .nav-bar();
+        }
+
+        .content {
+            flex: 1;
+            .content();
+        }
+
+        .input {
+            .input();
         }
     }
 }

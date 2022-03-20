@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Input, Tooltip, Button, Avatar, message } from 'antd'
 import { PlusOutlined, InfoCircleOutlined, UserOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import Ws, { WsEvent } from 'utils/ws'
-import { WS_SERVICE_URL, CONNECT_TOKEN, USER_INFO } from '@/constants/sessionStorage'
+import clearToken from 'utils/clearToken'
+import { USER_INFO } from '@/constants/sessionStorage'
 import style from './style/index.module.less'
 
 function Setting() {
@@ -48,8 +49,8 @@ function Setting() {
     }
     // 退出连接
     const exit = () => {
-        window.sessionStorage.removeItem(WS_SERVICE_URL)
-        window.sessionStorage.setItem(CONNECT_TOKEN, 'false')
+        Ws.ws?.close()
+        clearToken()
         navigate('/')
     }
     // 进入连接

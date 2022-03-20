@@ -1,0 +1,51 @@
+{
+  "id": "3261846",
+  "name": "ws",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "15838533",
+      "name": "smile",
+      "font_class": "smile",
+      "unicode": "e67e",
+      "unicode_decimal": 59006
+    },
+    {
+      "icon_id": "289088",
+      "name": "sound",
+      "font_class": "sound",
+      "unicode": "e77b",
+      "unicode_decimal": 59259
+    },
+    {
+      "icon_id": "8106218",
+      "name": "DND_mode",
+      "font_class": "DND_mode",
+      "unicode": "e69a",
+      "unicode_decimal": 59034
+    },
+    {
+      "icon_id": "8106225",
+      "name": "brightness",
+      "font_class": "brightness",
+      "unicode": "e698",
+      "unicode_decimal": 59032
+    },
+    {
+      "icon_id": "15838425",
+      "name": "add-circle",
+      "font_class": "add-circle",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "15838491",
+      "name": "keyboard-26",
+      "font_class": "keyboard-26",
+      "unicode": "e675",
+      "unicode_decimal": 58997
+    }
+  ]
+}
