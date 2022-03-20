@@ -23,7 +23,7 @@ wss.on('connection', (ws) => {
                 connectHandle(ws, data)
                 break
             case Event.MESSAGE:
-
+                messageHandle(ws, data)
                 break
             default:
                 break
@@ -79,4 +79,16 @@ function connectHandle(target, data) {
     ))
     target.name = name
     target.imageUrl = imageUrl
+}
+
+function messageHandle(target, data) {
+    wss.clients.forEach(ws => {
+        if(ws !== target) {
+            ws.send(JSON.stringify({
+                ...data,
+                name: ws.name,
+                imageUrl: ws.imageUrl
+            }))
+        }
+    })
 }

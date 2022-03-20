@@ -6,10 +6,13 @@ const CONNECT_TOKEN = 'connect_token'
 const USER_INFO = 'user_info'
 // 是否已断开连接标识
 const DISCONNECT = 'disconnect'
+// 聊天信息
+const MESSAGE_DATA = 'message_data'
 
 export {
     WS_SERVICE_URL,
     CONNECT_TOKEN,
     USER_INFO,
     DISCONNECT,
+    MESSAGE_DATA,
 }

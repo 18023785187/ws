@@ -1,3 +1,6 @@
+/**
+ * 加载中
+ */
 import { Spin } from 'antd'
 import style from './style/index.module.less'
 

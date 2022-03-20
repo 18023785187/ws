@@ -1,3 +1,6 @@
+/**
+ * 聊天室路由
+ */
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { USER_INFO } from '@/constants/sessionStorage'

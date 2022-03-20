@@ -14,3 +14,20 @@ body {
     display: table;
     clear: both;
 }
+
+*::-webkit-scrollbar {
+    width: .5vw;
+    background-color: transparent;
+    box-sizing: border-box;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #999;
+    border-top: none;
+    border-bottom: none;
+    box-sizing: border-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: #666;
+}
