@@ -4,7 +4,7 @@
 import { useState, useEffect, MouseEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { message } from 'antd'
-import Ws from 'utils/ws'
+import Ws, { WsEvent } from 'utils/ws'
 import clearToken from 'utils/clearToken'
 
 const settingStyleTemp = [
@@ -25,6 +25,28 @@ function NavBar() {
     const [settingStyle, setSettingStyle] = useState(settingStyleTemp)
     const [flag, setFlag] = useState<boolean>(true)
     const [darkmode, setDarkmode] = useState<boolean>(JSON.parse(window.localStorage.getItem('darkmode') || 'false'))
+    // 人数
+    const [count, setCount] = useState<number>(0)
+
+    // 人数监听
+    useEffect(() => {
+        Ws.ws?.addEventListener('message', countHandle)
+
+        function countHandle(e: MessageEvent) {
+            const { type, data } = JSON.parse(e.data)
+            if(type === WsEvent.COUNT) {
+                setCount(data)
+            }
+        }
+        // 初始化时向服务器询问人数
+        Ws.ws?.readyState === 1 && Ws.ws?.send(JSON.stringify({
+            type: WsEvent.COUNT
+        }))
+
+        return () => {
+            Ws.ws?.removeEventListener('message', countHandle)
+        }
+    }, [])
 
     useEffect(() => {
         window.addEventListener('mousedown', mousedown)
@@ -71,7 +93,7 @@ function NavBar() {
     return (
         <div className="nav-bar">
             <div className="left"></div>
-            <div className="center">HTM聊天室</div>
+            <div className="center">HYM聊天室({count})</div>
             <div className="right">
                 <div className="right-icon" title="设置" onMouseDown={settingOpen}>
                     <div className="right-icon-line-1" style={settingStyle[0]}></div>

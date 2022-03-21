@@ -2,8 +2,9 @@ import { message } from 'antd'
 import { WS_SERVICE_URL, CONNECT_TOKEN, DISCONNECT, USER_INFO } from '@/constants/sessionStorage'
 
 enum WsEvent {
-    CONNECT = 'connect',
-    TEXT = 'text',
+    CONNECT = 'connect', // 连接
+    TEXT = 'text', // 普通文本
+    COUNT = 'count', // 人数
 }
 
 class Ws {

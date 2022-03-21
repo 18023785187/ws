@@ -5,10 +5,10 @@ import { memo } from 'react'
 import { Avatar } from 'antd'
 
 interface IProps {
-    imageUrl: string | null
-    name: string
-    data: string
-    target: boolean
+    target: boolean,
+    name: string,
+    imageUrl: string | null,
+    data: string,
 }
 
 function Text(props: IProps) {

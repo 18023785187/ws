@@ -4,29 +4,24 @@
 import { useEffect, useState } from 'react'
 import PubSub from 'pubsub-js'
 import Text from './Text'
+import Enter from './Enter'
 import MessageType from '@/constants/messageType'
 import Pubsub from '@/constants/pubsub'
 import Ws from 'utils/ws'
 import IndexedDB, { Tabel } from '@/utils/indexedDB'
-
-type messageDataType = {
-    type: MessageType,
-    target: boolean,
-    name: string,
-    imageUrl: string | null,
-    data: any,
-    date: string,
-}
+import type { TextProps, EnterProps } from './typings'
 
 function Content() {
-    const [messageData, setMessageData] = useState<messageDataType[]>([])
+    const [messageData, setMessageData] = useState<unknown[]>([])
 
     useEffect(() => {
         IndexedDB.async(
             () => {
                 IndexedDB.getTargetObjectStoreData(
                     Tabel.MESSAGE,
-                    (res: messageDataType[]) => setMessageData(res)
+                    (res: unknown[]) => {
+                        setMessageData(res)
+                    }
                 )
             }
         )
@@ -38,7 +33,9 @@ function Content() {
                 () => {
                     IndexedDB.getTargetObjectStoreData(
                         Tabel.MESSAGE,
-                        (res: messageDataType[]) => setMessageData(res)
+                        (res: unknown[]) => {
+                            setMessageData(res)
+                        }
                     )
                 }
             )
@@ -54,29 +51,54 @@ function Content() {
 
         function handle(e: MessageEvent) {
             const { type, data: datas } = JSON.parse(e.data)
-            if (type === MessageType.TEXT) {
-                IndexedDB.async(
-                    () => {
-                        const { data, name, imageUrl, date } = JSON.parse(datas)
-                        IndexedDB.addDataToTargetObjectStore(
-                            Tabel.MESSAGE,
-                            {
-                                data,
-                                name,
-                                imageUrl,
-                                date,
-                                target: false,
-                                type: MessageType.TEXT
-                            },
-                            () => {
-                                IndexedDB.getTargetObjectStoreData(
-                                    Tabel.MESSAGE,
-                                    (res: messageDataType[]) => setMessageData(res)
-                                )
-                            }
-                        )
-                    }
-                )
+            switch (type) {
+                case MessageType.TEXT:
+                    IndexedDB.async(
+                        () => {
+                            const { data, name, imageUrl, date } = JSON.parse(datas)
+                            IndexedDB.addDataToTargetObjectStore(
+                                Tabel.MESSAGE,
+                                {
+                                    data,
+                                    name,
+                                    imageUrl,
+                                    date,
+                                    target: false,
+                                    type: MessageType.TEXT
+                                },
+                                () => {
+                                    IndexedDB.getTargetObjectStoreData(
+                                        Tabel.MESSAGE,
+                                        (res: unknown[]) => setMessageData(res)
+                                    )
+                                }
+                            )
+                        }
+                    )
+                    break;
+                case MessageType.ENTER:
+                    IndexedDB.async(
+                        () => {
+                            const { name, date } = JSON.parse(datas)
+                            IndexedDB.addDataToTargetObjectStore(
+                                Tabel.MESSAGE,
+                                {
+                                    name,
+                                    date,
+                                    type: MessageType.ENTER
+                                },
+                                () => {
+                                    IndexedDB.getTargetObjectStoreData(
+                                        Tabel.MESSAGE,
+                                        (res: unknown[]) => setMessageData(res)
+                                    )
+                                }
+                            )
+                        }
+                    )
+                    break
+                default:
+                    break;
             }
         }
 
@@ -89,11 +111,17 @@ function Content() {
         <div className='content'>
             {
                 messageData.map(item => {
-                    const { type, target, name, imageUrl, data, date } = item
-                    const info = { target, name, imageUrl, data }
+                    const { type } = item as { type: MessageType }
                     switch (type) {
-                        case MessageType.TEXT:
+                        case MessageType.TEXT: {
+                            const { target, name, imageUrl, data, date } = item as TextProps
+                            const info = { target, name, imageUrl, data }
                             return <Text key={date} {...info} />
+                        }
+                        case MessageType.ENTER: {
+                            const { name, date } = item as EnterProps
+                            return <Enter key={date} name={name} />
+                        }
                         default:
                             return
                     }

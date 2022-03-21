@@ -113,6 +113,7 @@ function Setting() {
                     }
                     onChange={(e) => setName(e.target.value)}
                     value={name}
+                    maxLength={10}
                 />
                 <div className='setting-button'>
                     <Button

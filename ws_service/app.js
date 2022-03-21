@@ -3,7 +3,7 @@ const app = require('express')()
 const http = require('http')
 const WebSocket = require('ws')
 const Event = require('./event')
-const { sendTemp, getNetworkIp, arrayBufferToStr } = require('./utils')
+const { sendTemp, getNetworkIp } = require('./utils')
 
 const server = http.createServer(app)
 
@@ -15,7 +15,7 @@ wss.on('connection', (ws) => {
     // 监听客户端发来的消息
     ws.on('message', (message) => {
         // 对message过大的情况下采取分块传输
-        message = JSON.parse(arrayBufferToStr(message))
+        message = JSON.parse(message)
         const { type, data } = message
         switch (type) {
             case Event.CONNECT:
@@ -24,26 +24,24 @@ wss.on('connection', (ws) => {
             case Event.TEXT:
                 textHandle(ws, data)
                 break
+            case Event.COUNT:
+                countHandle(count)
+                break
             default:
                 break
         }
-        // let msgData = JSON.parse(message)
-        // if (msgData.type === 'open') {
-        //     // 初始连接时标识会话
-        //     ws.sessionId = `${msgData.fromUserId}-${msgData.toUserId}`
-        // } else {
-        //     let sessionId = `${msgData.toUserId}-${msgData.fromUserId}`
-        //     wss.clients.forEach(client => {
-        //         if (client.sessionId === sessionId) {
-        //             client.send(message) // 给对应的客户端连接发送消息
-        //         }
-        //     })
-        // }
     })
 
     // 连接关闭
     ws.on('close', () => {
-        // console.log('连接关闭')
+        // 广播人数
+        let count = 0
+        wss.clients.forEach(w => {
+            if(w.name && w !== ws) {
+                ++count
+            }
+        })
+        countHandle(count)
     })
 })
 
@@ -77,11 +75,27 @@ function connectHandle(target, data) {
     ))
     target.name = name
     target.imageUrl = imageUrl
+    let count = 0
+    // 广播进入
+    wss.clients.forEach(ws => {
+        if (ws.name) ++count
+        if (ws !== target) {
+            ws.send(sendTemp(
+                Event.ENTER,
+                JSON.stringify({
+                    name,
+                    date: Date.now()
+                })
+            ))
+        }
+    })
+    // 广播人数
+    countHandle(count)
 }
-
+// 处理文本信息
 function textHandle(target, data) {
     wss.clients.forEach(ws => {
-        if(ws !== target) {
+        if (ws !== target) {
             ws.send(sendTemp(
                 Event.TEXT,
                 JSON.stringify({
@@ -91,5 +105,15 @@ function textHandle(target, data) {
                 })
             ))
         }
+    })
+}
+// 人数处理
+function countHandle(curCount) {
+    count = curCount
+    wss.clients.forEach(ws => {
+        ws.send(sendTemp(
+            Event.COUNT,
+            count
+        ))
     })
 }

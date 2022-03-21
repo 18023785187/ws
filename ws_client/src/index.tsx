@@ -6,7 +6,6 @@ import reportWebVitals from './reportWebVitals'
 import './cesium.config'
 import 'antd/dist/antd.css'
 import 'assets/style/base.css'
-import IndexedDB, { Tabel } from '@/utils/indexedDB'
 
 message.config({
   maxCount: 1
