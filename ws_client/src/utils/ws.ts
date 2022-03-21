@@ -1,9 +1,9 @@
 import { message } from 'antd'
-import { WS_SERVICE_URL, CONNECT_TOKEN, DISCONNECT } from '@/constants/sessionStorage'
+import { WS_SERVICE_URL, CONNECT_TOKEN, DISCONNECT, USER_INFO } from '@/constants/sessionStorage'
 
 enum WsEvent {
     CONNECT = 'connect',
-    MESSAGE = 'message',
+    TEXT = 'text',
 }
 
 class Ws {
@@ -15,6 +15,10 @@ class Ws {
                 url,
                 (e) => {
                     console.log('连接成功')
+                    const user_info = window.sessionStorage.getItem(USER_INFO)
+                    if(user_info) {
+                        this.connectSend(JSON.parse(user_info))
+                    }
                 },
                 (e) => {
                     message.error('错误！服务器已断开连接', 2, auth)

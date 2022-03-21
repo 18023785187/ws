@@ -6,8 +6,8 @@ import PubSub from 'pubsub-js'
 import Text from './Text'
 import MessageType from '@/constants/messageType'
 import Pubsub from '@/constants/pubsub'
-import { MESSAGE_DATA } from '@/constants/sessionStorage'
 import Ws from 'utils/ws'
+import IndexedDB, { Tabel } from '@/utils/indexedDB'
 
 type messageDataType = {
     type: MessageType,
@@ -19,11 +19,29 @@ type messageDataType = {
 }
 
 function Content() {
-    const [messageData, setMessageData] = useState<messageDataType[]>(JSON.parse(window.sessionStorage.getItem(MESSAGE_DATA)!))
+    const [messageData, setMessageData] = useState<messageDataType[]>([])
 
     useEffect(() => {
-        PubSub.subscribe(Pubsub.CHANGE_MESSAGE, (_, messageData: messageDataType[]) => {
-            setMessageData(messageData)
+        IndexedDB.async(
+            () => {
+                IndexedDB.getTargetObjectStoreData(
+                    Tabel.MESSAGE,
+                    (res: messageDataType[]) => setMessageData(res)
+                )
+            }
+        )
+    }, [])
+
+    useEffect(() => {
+        PubSub.subscribe(Pubsub.CHANGE_MESSAGE, () => {
+            IndexedDB.async(
+                () => {
+                    IndexedDB.getTargetObjectStoreData(
+                        Tabel.MESSAGE,
+                        (res: messageDataType[]) => setMessageData(res)
+                    )
+                }
+            )
         })
 
         return () => {
@@ -35,21 +53,31 @@ function Content() {
         Ws.ws?.addEventListener('message', handle)
 
         function handle(e: MessageEvent) {
-            const messageData = JSON.parse(window.sessionStorage.getItem(MESSAGE_DATA)!)
-            const { text: data, name, imageUrl, date } = JSON.parse(e.data)
-            messageData.push({
-                data,
-                name,
-                imageUrl,
-                date,
-                target: false,
-                type: MessageType.TEXT
-            })
-            window.sessionStorage.setItem(
-                MESSAGE_DATA,
-                JSON.stringify(messageData)
-            )
-            setMessageData(messageData)
+            const { type, data: datas } = JSON.parse(e.data)
+            if (type === MessageType.TEXT) {
+                IndexedDB.async(
+                    () => {
+                        const { data, name, imageUrl, date } = JSON.parse(datas)
+                        IndexedDB.addDataToTargetObjectStore(
+                            Tabel.MESSAGE,
+                            {
+                                data,
+                                name,
+                                imageUrl,
+                                date,
+                                target: false,
+                                type: MessageType.TEXT
+                            },
+                            () => {
+                                IndexedDB.getTargetObjectStoreData(
+                                    Tabel.MESSAGE,
+                                    (res: messageDataType[]) => setMessageData(res)
+                                )
+                            }
+                        )
+                    }
+                )
+            }
         }
 
         return () => {
@@ -63,7 +91,7 @@ function Content() {
                 messageData.map(item => {
                     const { type, target, name, imageUrl, data, date } = item
                     const info = { target, name, imageUrl, data }
-                    switch(type) {
+                    switch (type) {
                         case MessageType.TEXT:
                             return <Text key={date} {...info} />
                         default:

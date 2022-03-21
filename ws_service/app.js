@@ -12,7 +12,6 @@ const wss = new WebSocket.Server({
 })
 
 wss.on('connection', (ws) => {
-    console.log(wss.clients.size)
     // 监听客户端发来的消息
     ws.on('message', (message) => {
         // 对message过大的情况下采取分块传输
@@ -22,8 +21,8 @@ wss.on('connection', (ws) => {
             case Event.CONNECT:
                 connectHandle(ws, data)
                 break
-            case Event.MESSAGE:
-                messageHandle(ws, data)
+            case Event.TEXT:
+                textHandle(ws, data)
                 break
             default:
                 break
@@ -63,7 +62,6 @@ server.listen(port, host, () => {
 function connectHandle(target, data) {
     const { name, imageUrl } = data
     for (const ws of wss.clients) {
-        console.log(ws.name)
         if (ws.name === name) {
             target.send(sendTemp(
                 Event.CONNECT,
@@ -81,14 +79,17 @@ function connectHandle(target, data) {
     target.imageUrl = imageUrl
 }
 
-function messageHandle(target, data) {
+function textHandle(target, data) {
     wss.clients.forEach(ws => {
         if(ws !== target) {
-            ws.send(JSON.stringify({
-                ...data,
-                name: ws.name,
-                imageUrl: ws.imageUrl
-            }))
+            ws.send(sendTemp(
+                Event.TEXT,
+                JSON.stringify({
+                    ...data,
+                    name: target.name,
+                    imageUrl: target.imageUrl
+                })
+            ))
         }
     })
 }

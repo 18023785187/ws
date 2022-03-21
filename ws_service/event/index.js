@@ -4,7 +4,7 @@
 
 const Event = {
     CONNECT: 'connect', // 连接事件，用于注册用户信息
-    MESSAGE: 'message',
+    TEXT: 'text', // 文本信息
 }
 
 module.exports = Event
