@@ -123,7 +123,7 @@ function Content() {
                             return <Enter key={date} name={name} />
                         }
                         default:
-                            return
+                            return ''
                     }
                 })
             }
