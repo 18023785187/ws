@@ -28,7 +28,7 @@ function Content() {
                 )
             }
         )
-    }, [])
+    }, [id])
 
     useEffect(() => {
         PubSub.subscribe(Pubsub.CHANGE_MESSAGE, () => {
@@ -48,7 +48,7 @@ function Content() {
         return () => {
             PubSub.unsubscribe(Pubsub.CHANGE_MESSAGE)
         }
-    }, [])
+    }, [id])
 
     useEffect(() => {
         Ws.ws?.addEventListener('message', handle)
@@ -109,7 +109,7 @@ function Content() {
         return () => {
             Ws.ws?.removeEventListener('message', handle)
         }
-    }, [])
+    }, [id])
 
     return (
         <div className='content'>
