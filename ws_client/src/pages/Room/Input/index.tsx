@@ -4,6 +4,7 @@
 import { useRef, useState, ChangeEvent } from 'react'
 import { Input as AntdInput, message as antdMessage } from 'antd'
 import PubSub from 'pubsub-js'
+import { v4 } from 'uuid'
 import Ws, { WsEvent } from 'utils/ws'
 import IndexedDB, { Tabel } from '@/utils/indexedDB'
 import MessageType from '@/constants/messageType'
@@ -37,23 +38,30 @@ function Input() {
             return
         }
         setFlag(false)
+        const textId = v4()
         IndexedDB.async(
             () => {
                 const date = Date.now()
                 const user_info = JSON.parse(window.sessionStorage.getItem(USER_INFO)!)
-                IndexedDB.addDataToTargetObjectStore(
+                IndexedDB.putDataToTargetObjectStore(
                     Tabel.MESSAGE,
-                    {
-                        type: MessageType.TEXT,
-                        target: true,
-                        ...user_info,
-                        data: message,
-                        date
+                    user_info.id,
+                    (prevData, next) => {
+                        prevData.push({
+                            type: MessageType.TEXT,
+                            target: true,
+                            ...user_info,
+                            id: textId,
+                            data: message,
+                            date
+                        })
+                        next(prevData)
                     },
                     () => {
                         Ws.ws?.send(JSON.stringify({
                             type: WsEvent.TEXT,
                             data: {
+                                id: textId,
                                 data: message,
                                 date
                             }

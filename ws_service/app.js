@@ -2,6 +2,7 @@ const path = require('path')
 const app = require('express')()
 const http = require('http')
 const WebSocket = require('ws')
+const { v4 } = require('uuid')
 const Event = require('./event')
 const { sendTemp, getNetworkIp } = require('./utils')
 
@@ -58,34 +59,43 @@ server.listen(port, host, () => {
 
 // 连接处理事件
 function connectHandle(target, data) {
-    const { name, imageUrl } = data
+    const { name, imageUrl, id: iid } = data
     for (const ws of wss.clients) {
         if (ws.name === name) {
             target.send(sendTemp(
                 Event.CONNECT,
-                false
+                JSON.stringify({
+                    connect: false,
+                    id: ''
+                })
             ))
             return
         }
     }
-
+    const id = iid ? iid : v4()
     target.send(sendTemp(
         Event.CONNECT,
-        true
+        {
+            connect: true,
+            id
+        }
     ))
+    target.iid = id
     target.name = name
     target.imageUrl = imageUrl
     let count = 0
     // 广播进入
+    const enterId = v4()
     wss.clients.forEach(ws => {
         if (ws.name) ++count
         if (ws !== target) {
             ws.send(sendTemp(
                 Event.ENTER,
-                JSON.stringify({
+                {
                     name,
+                    id: enterId,
                     date: Date.now()
-                })
+                }
             ))
         }
     })
@@ -98,11 +108,11 @@ function textHandle(target, data) {
         if (ws !== target) {
             ws.send(sendTemp(
                 Event.TEXT,
-                JSON.stringify({
+                {
                     ...data,
                     name: target.name,
                     imageUrl: target.imageUrl
-                })
+                }
             ))
         }
     })

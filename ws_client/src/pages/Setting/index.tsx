@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { Input, Tooltip, Button, Avatar, message } from 'antd'
 import { PlusOutlined, InfoCircleOutlined, UserOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import Ws, { WsEvent } from 'utils/ws'
+import IndexedDB, { Tabel } from '@/utils/indexedDB'
 import clearToken from 'utils/clearToken'
 import { USER_INFO } from '@/constants/sessionStorage'
 import style from './style/index.module.less'
@@ -22,14 +23,23 @@ function Setting() {
         function wsMessageEvent(e: MessageEvent) {
             const { type, data } = JSON.parse(e.data)
             if (type === WsEvent.CONNECT) {
-                if (data) {
+                if (data.connect) {
                     message.success('正在进入房间中...', 2, () => {
                         const userInfo = {
+                            id: data.id,
                             name,
                             imageUrl
                         }
+                        IndexedDB.async(
+                            () => {
+                                IndexedDB.addDataToTargetObjectStore(
+                                    Tabel.MESSAGE,
+                                    data.id
+                                )
+                            }
+                        )
                         window.sessionStorage.setItem(USER_INFO, JSON.stringify(userInfo))
-                        navigate('/room')
+                        navigate('/room', { replace: false })
                     })
                 } else {
                     message.error('当前名字已被注册，请重新选择')
@@ -54,7 +64,7 @@ function Setting() {
     const exit = () => {
         Ws.ws?.close()
         clearToken()
-        navigate('/')
+        navigate('/', { replace: true })
     }
     // 进入连接
     const emit = () => {

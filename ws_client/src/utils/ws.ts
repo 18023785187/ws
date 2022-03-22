@@ -96,8 +96,9 @@ class Ws {
      * @param info 信息，一般是一个对象
      */
     public connectSend(info: {
+        id?: string,
         name: string,
-        imageUrl: string | null
+        imageUrl: string | null,
     }): void {
         this.send(WsEvent.CONNECT, info)
     }

@@ -9,18 +9,21 @@ import MessageType from '@/constants/messageType'
 import Pubsub from '@/constants/pubsub'
 import Ws from 'utils/ws'
 import IndexedDB, { Tabel } from '@/utils/indexedDB'
+import { USER_INFO } from '@/constants/sessionStorage'
 import type { TextProps, EnterProps } from './typings'
 
 function Content() {
     const [messageData, setMessageData] = useState<unknown[]>([])
+    const { id } = JSON.parse(window.sessionStorage.getItem(USER_INFO)!)
 
     useEffect(() => {
         IndexedDB.async(
             () => {
-                IndexedDB.getTargetObjectStoreData(
+                IndexedDB.getDataToTargetObjectStore(
                     Tabel.MESSAGE,
-                    (res: unknown[]) => {
-                        setMessageData(res)
+                    id,
+                    (e) => {
+                        setMessageData(e.target.result?.data ?? [])
                     }
                 )
             }
@@ -31,10 +34,11 @@ function Content() {
         PubSub.subscribe(Pubsub.CHANGE_MESSAGE, () => {
             IndexedDB.async(
                 () => {
-                    IndexedDB.getTargetObjectStoreData(
+                    IndexedDB.getDataToTargetObjectStore(
                         Tabel.MESSAGE,
-                        (res: unknown[]) => {
-                            setMessageData(res)
+                        id,
+                        (e) => {
+                            setMessageData(e.target.result.data)
                         }
                     )
                 }
@@ -55,22 +59,22 @@ function Content() {
                 case MessageType.TEXT:
                     IndexedDB.async(
                         () => {
-                            const { data, name, imageUrl, date } = JSON.parse(datas)
-                            IndexedDB.addDataToTargetObjectStore(
+                            const { data, name, imageUrl, date, id: textId } = datas
+                            IndexedDB.putDataToTargetObjectStore(
                                 Tabel.MESSAGE,
-                                {
-                                    data,
-                                    name,
-                                    imageUrl,
-                                    date,
-                                    target: false,
-                                    type: MessageType.TEXT
-                                },
-                                () => {
-                                    IndexedDB.getTargetObjectStoreData(
-                                        Tabel.MESSAGE,
-                                        (res: unknown[]) => setMessageData(res)
-                                    )
+                                id,
+                                (prevData, next) => {
+                                    prevData.push({
+                                        id: textId,
+                                        data,
+                                        name,
+                                        imageUrl,
+                                        date,
+                                        target: false,
+                                        type: MessageType.TEXT
+                                    })
+                                    next(prevData)
+                                    setMessageData(prevData)
                                 }
                             )
                         }
@@ -79,19 +83,19 @@ function Content() {
                 case MessageType.ENTER:
                     IndexedDB.async(
                         () => {
-                            const { name, date } = JSON.parse(datas)
-                            IndexedDB.addDataToTargetObjectStore(
+                            const { name, date, id: enterId } = datas
+                            IndexedDB.putDataToTargetObjectStore(
                                 Tabel.MESSAGE,
-                                {
-                                    name,
-                                    date,
-                                    type: MessageType.ENTER
-                                },
-                                () => {
-                                    IndexedDB.getTargetObjectStoreData(
-                                        Tabel.MESSAGE,
-                                        (res: unknown[]) => setMessageData(res)
-                                    )
+                                id,
+                                (prevData, next) => {
+                                    prevData.push({
+                                        id: enterId,
+                                        name,
+                                        date,
+                                        type: MessageType.ENTER
+                                    })
+                                    next(prevData)
+                                    setMessageData(prevData)
                                 }
                             )
                         }
@@ -114,13 +118,15 @@ function Content() {
                     const { type } = item as { type: MessageType }
                     switch (type) {
                         case MessageType.TEXT: {
-                            const { target, name, imageUrl, data, date } = item as TextProps
+                            // const { id, target, name, imageUrl, data, date } = item as TextProps
+                            const { id, target, name, imageUrl, data } = item as TextProps
                             const info = { target, name, imageUrl, data }
-                            return <Text key={date} {...info} />
+                            return <Text key={id} {...info} />
                         }
                         case MessageType.ENTER: {
-                            const { name, date } = item as EnterProps
-                            return <Enter key={date} name={name} />
+                            // const { name, date, id } = item as EnterProps
+                            const { name, id } = item as EnterProps
+                            return <Enter key={id} name={name} />
                         }
                         default:
                             return ''

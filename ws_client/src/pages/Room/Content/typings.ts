@@ -1,5 +1,6 @@
 
 interface TextProps {
+    id: string,
     target: boolean,
     name: string,
     imageUrl: string | null,
@@ -8,6 +9,7 @@ interface TextProps {
 }
 
 interface EnterProps {
+    id: string,
     name: string,
     date: number
 }
