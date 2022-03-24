@@ -25,6 +25,7 @@ class IndexedDB {
         this.fulfulledFn = []
         this.rejectedFn = []
         this.indexedDB.addEventListener('success', () => {
+            console.log('indexedDB连接成功')
             this.status = Status.FULFILLED
             this.initTabel()
             this.fulfulledFn.forEach(fn => fn())

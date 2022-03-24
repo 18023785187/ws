@@ -1,7 +1,7 @@
 /**
  * 输入组件
  */
-import { useRef, useState, ChangeEvent } from 'react'
+import { useRef, useState, ChangeEvent, useMemo, useCallback } from 'react'
 import { Input as AntdInput, message as antdMessage } from 'antd'
 import PubSub from 'pubsub-js'
 import { v4 } from 'uuid'
@@ -11,16 +11,26 @@ import MessageType from '@/constants/messageType'
 import { USER_INFO } from '@/constants/sessionStorage'
 import Pubsub from '@/constants/pubsub'
 import PopUp, { IPopUpRef } from './PopUp'
+import Emoji from './Emoji'
+import Add from './AddExtend'
+
+enum PopUpMode {
+    EMOJI = 'emoji',
+    ADD = 'add'
+}
 
 const { TextArea } = AntdInput
 
 function Input() {
     const [message, setMessage] = useState<string>('')
     const [sendFlag, setSendFlag] = useState<boolean>(false)
+    // 语音与键盘
+    const [isFont, setIsFont] = useState<boolean>(true)
     // 发送控制阀
     const [flag, setFlag] = useState<boolean>(true)
     // 弹窗组件
     const popUpRef = useRef<IPopUpRef>(null)
+    const [popUpMode, setPopUpMode] = useState<PopUpMode | ''>('')
 
     const inputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         if (e.target.value) {
@@ -76,11 +86,36 @@ function Input() {
         )
     }
 
+    const PMode = useMemo(() => {
+        switch (popUpMode) {
+            case PopUpMode.EMOJI: {
+                return <Emoji onChange={(emoji) => {
+                    setMessage(message + emoji)
+                    setSendFlag(true)
+                }} />
+            }
+            case PopUpMode.ADD: {
+                return <Add />
+            }
+            default: {
+                return <></>
+            }
+        }
+    }, [popUpMode, message])
+
+    const popUpCloseCallback = useCallback(() => {
+        setPopUpMode('')
+    }, [])
+
     return (
         <>
-            <div className='input'>
+            <div className='input' onMouseDown={(e) => { e.stopPropagation() }}>
                 <div className='input-left'>
-                    <div className='iconfont sound'>&#xe77b;</div>
+                    <div
+                        className='iconfont sound'
+                        dangerouslySetInnerHTML={{ __html: isFont ? '&#xe77b;' : '&#xe675;' }}
+                        onClick={() => setIsFont(!isFont)}
+                    ></div>
                 </div>
                 <TextArea
                     className='textarea'
@@ -94,11 +129,12 @@ function Input() {
                 <div className='input-right'>
                     <div
                         className='iconfont'
-                        onMouseDown={(e) => { e.stopPropagation(); popUpRef.current?.open() }}
+                        onMouseDown={(e) => { e.stopPropagation(); popUpRef.current?.open(); setPopUpMode(PopUpMode.EMOJI) }}
                     >&#xe67e;</div>
                     <div
                         style={sendFlag ? { width: 0, visibility: 'hidden', opacity: 0 } : {}}
                         className='iconfont add'
+                        onMouseDown={(e) => { e.stopPropagation(); popUpRef.current?.open(); setPopUpMode(PopUpMode.ADD) }}
                     >&#xe664;</div>
                     <div
                         style={sendFlag ? {} : { width: 0, visibility: 'hidden', opacity: 0 }}
@@ -108,7 +144,7 @@ function Input() {
                     >发送</div>
                 </div>
             </div>
-            <PopUp ref={popUpRef} />
+            <PopUp ref={popUpRef} children={PMode} closeCallback={popUpCloseCallback} />
         </>
     )
 }

@@ -15,7 +15,7 @@ class Ws {
             this.createWebSocket(
                 url,
                 (e) => {
-                    console.log('连接成功')
+                    console.log('websocket连接成功')
                     const user_info = window.sessionStorage.getItem(USER_INFO)
                     if(user_info) {
                         this.connectSend(JSON.parse(user_info))

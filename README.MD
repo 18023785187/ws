@@ -58,10 +58,20 @@ npm run start
 客户端有现成的url链接，直接访问即可。
 https://ws-eight.vercel.app/
 
+如果两者都使用ngrok，那么可以配置多隧道代理
+1. 找到生成的ngrok.yml `C:\Users\用户/.ngrok2/ngrok.yml`。
+2. 修改ngrok.yml。
+3. 在终端执行命令 `ngrok start --all(启动所有端口)` 或 `ngrok start tunnel1 tunnel2 (启动指定端口)`。
+
+<img src='./docs/ngrok-config.png'>
+
 #### 📄 说明
 
 1. 该聊天室使用websocket协议，对于http协议请使用ws协议，https协议使用wss协议。
 2. 对于聊天记录存储使用的是indexedDB。
 
 #### 🖖 效果展示
-
+<img src='./docs/home.png'>
+<img src='./docs/setting.png'>
+<img src='./docs/room.png'>
+<img src='./docs/room-night.png'>

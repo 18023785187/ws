@@ -1,7 +1,7 @@
 /**
  * 聊天内容
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import PubSub from 'pubsub-js'
 import Text from './Text'
 import Enter from './Enter'
@@ -12,9 +12,14 @@ import IndexedDB, { Tabel } from '@/utils/indexedDB'
 import { USER_INFO } from '@/constants/sessionStorage'
 import type { TextProps, EnterProps } from './typings'
 
+let timer: number
+let contentScrollFlag: boolean = true
+
 function Content() {
     const [messageData, setMessageData] = useState<unknown[]>([])
     const { id } = JSON.parse(window.sessionStorage.getItem(USER_INFO)!)
+    // 内容dom
+    const ContentRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         IndexedDB.async(
@@ -49,6 +54,10 @@ function Content() {
             PubSub.unsubscribe(Pubsub.CHANGE_MESSAGE)
         }
     }, [id])
+
+    useLayoutEffect(() => {
+        contentScrollFlag && down()
+    }, [messageData])
 
     useEffect(() => {
         Ws.ws?.addEventListener('message', handle)
@@ -111,8 +120,18 @@ function Content() {
         }
     }, [id])
 
+    function down(): void {
+        ContentRef.current!.scrollTop = ContentRef.current!.scrollHeight
+    }
+    // 用户滑动内容区时停止新信息滚动
+    function contentScroll(): void {
+        contentScrollFlag = false
+        window.clearTimeout(timer)
+        timer = window.setTimeout(() => contentScrollFlag = true, 500)
+    }
+
     return (
-        <div className='content'>
+        <div className='content' ref={ContentRef} onScroll={contentScroll}>
             {
                 messageData.map(item => {
                     const { type } = item as { type: MessageType }
