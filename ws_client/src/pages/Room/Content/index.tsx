@@ -1,9 +1,10 @@
 /**
  * 聊天内容
  */
-import { useEffect, useState, useRef, useLayoutEffect } from 'react'
+import { useEffect, useState, useRef, useLayoutEffect, useCallback } from 'react'
 import PubSub from 'pubsub-js'
 import Text from './Text'
+import Image from './Image'
 import Enter from './Enter'
 import MessageType from '@/constants/messageType'
 import Pubsub from '@/constants/pubsub'
@@ -88,7 +89,31 @@ function Content() {
                             )
                         }
                     )
-                    break;
+                    break
+                case MessageType.IMAGE:
+                    IndexedDB.async(
+                        () => {
+                            const { data, name, imageUrl, date, id: imageId } = datas
+                            IndexedDB.putDataToTargetObjectStore(
+                                Tabel.MESSAGE,
+                                id,
+                                (prevData, next) => {
+                                    prevData.push({
+                                        id: imageId,
+                                        data,
+                                        name,
+                                        imageUrl,
+                                        date,
+                                        target: false,
+                                        type: MessageType.IMAGE
+                                    })
+                                    next(prevData)
+                                    setMessageData(prevData)
+                                }
+                            )
+                        }
+                    )
+                    break
                 case MessageType.ENTER:
                     IndexedDB.async(
                         () => {
@@ -111,7 +136,7 @@ function Content() {
                     )
                     break
                 default:
-                    break;
+                    break
             }
         }
 
@@ -120,9 +145,9 @@ function Content() {
         }
     }, [id])
 
-    function down(): void {
+    const down = useCallback(() => {
         ContentRef.current!.scrollTop = ContentRef.current!.scrollHeight
-    }
+    }, [])
     // 用户滑动内容区时停止新信息滚动
     function contentScroll(): void {
         contentScrollFlag = false
@@ -141,6 +166,12 @@ function Content() {
                             const { id, target, name, imageUrl, data } = item as TextProps
                             const info = { target, name, imageUrl, data }
                             return <Text key={id} {...info} />
+                        }
+                        case MessageType.IMAGE: {
+                            // const { id, target, name, imageUrl, data, date } = item as TextProps
+                            const { id, target, name, imageUrl, data } = item as TextProps
+                            const info = { target, name, imageUrl, data }
+                            return <Image key={id} {...info} loading={down} />
                         }
                         case MessageType.ENTER: {
                             // const { name, date, id } = item as EnterProps

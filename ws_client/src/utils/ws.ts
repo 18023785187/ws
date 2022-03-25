@@ -4,6 +4,7 @@ import { WS_SERVICE_URL, CONNECT_TOKEN, DISCONNECT, USER_INFO } from '@/constant
 enum WsEvent {
     CONNECT = 'connect', // 连接
     TEXT = 'text', // 普通文本
+    IMAGE = 'image', // 图片
     COUNT = 'count', // 人数
 }
 

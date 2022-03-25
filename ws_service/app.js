@@ -25,6 +25,9 @@ wss.on('connection', (ws) => {
             case Event.TEXT:
                 textHandle(ws, data)
                 break
+            case Event.IMAGE:
+                imageHandle(ws, data)
+                break
             case Event.COUNT:
                 countHandle(count)
                 break
@@ -38,7 +41,7 @@ wss.on('connection', (ws) => {
         // 广播人数
         let count = 0
         wss.clients.forEach(w => {
-            if(w.name && w !== ws) {
+            if (w.name && w !== ws) {
                 ++count
             }
         })
@@ -53,8 +56,8 @@ app.get('/', function (req, res) {
 //监听端口
 const port = process.env.PORT || 8000
 const host = getNetworkIp()
-server.listen(port, 'localhost', () => {
-    console.log(`服务器跑起来了~ @ http://${'localhost'}:${port}`)
+server.listen(port, host, () => {
+    console.log(`服务器跑起来了~ @ http://${host}:${port}`)
 })
 
 // 连接处理事件
@@ -108,6 +111,21 @@ function textHandle(target, data) {
         if (ws !== target) {
             ws.send(sendTemp(
                 Event.TEXT,
+                {
+                    ...data,
+                    name: target.name,
+                    imageUrl: target.imageUrl
+                }
+            ))
+        }
+    })
+}
+// 图片信息
+function imageHandle(target, data) {
+    wss.clients.forEach(ws => {
+        if (ws !== target) {
+            ws.send(sendTemp(
+                Event.IMAGE,
                 {
                     ...data,
                     name: target.name,

@@ -109,7 +109,7 @@ function Input() {
 
     return (
         <>
-            <div className='input' onMouseDown={(e) => { e.stopPropagation() }}>
+            <div className='input'>
                 <div className='input-left'>
                     <div
                         className='iconfont sound'
