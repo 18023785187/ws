@@ -3,12 +3,18 @@ import ReactDOM from 'react-dom'
 import { message } from 'antd'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
+import zoomerang from 'utils/zoomerang'
 import './cesium.config'
 import 'antd/dist/antd.css'
 import 'assets/style/base.css'
 
 message.config({
   maxCount: 1
+})
+
+zoomerang.config({
+  bgColor: '#000',
+  maxWidth: 375
 })
 
 ReactDOM.render(

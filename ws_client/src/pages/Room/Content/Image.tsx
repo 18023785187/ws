@@ -1,8 +1,9 @@
 /**
  * 图片
  */
-import { memo } from 'react'
+import { memo, useLayoutEffect, useRef } from 'react'
 import { Avatar } from 'antd'
+import zoomerang from 'utils/zoomerang'
 
 interface IProps {
     target: boolean,
@@ -14,6 +15,11 @@ interface IProps {
 
 function Image(props: IProps) {
     const { imageUrl, name, data, target, loading } = props
+    const imageRef = useRef<HTMLImageElement>(null)
+
+    useLayoutEffect(() => {
+        zoomerang.listen(imageRef.current)
+    }, [])
 
     return (
         <div className={target ? 'image-2' : 'image-1'}>
@@ -24,7 +30,13 @@ function Image(props: IProps) {
             }
             <div className='image-info'>
                 {target ? '' : <div className='user-name'>{name}</div>}
-                <img className={target ? 'image-content-2' : 'image-content-1'} src={data} onLoad={loading} />
+                <div className={target ? 'image-content-2' : 'image-content-1'}>
+                    <img
+                        src={data}
+                        onLoad={loading}
+                        ref={imageRef}
+                    />
+                </div>
             </div>
         </div>
     )
