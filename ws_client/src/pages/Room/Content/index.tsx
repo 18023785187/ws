@@ -11,7 +11,7 @@ import Pubsub from '@/constants/pubsub'
 import Ws from 'utils/ws'
 import IndexedDB, { Tabel } from '@/utils/indexedDB'
 import { USER_INFO } from '@/constants/sessionStorage'
-import type { TextProps, EnterProps } from './typings'
+import type { TextProps, ImageProps, EnterProps } from './typings'
 
 let timer: number
 let contentScrollFlag: boolean = true
@@ -22,6 +22,7 @@ function Content() {
     // 内容dom
     const ContentRef = useRef<HTMLDivElement>(null)
 
+    // 初始化时从indexedDB获取信息
     useEffect(() => {
         IndexedDB.async(
             () => {
@@ -35,7 +36,7 @@ function Content() {
             }
         )
     }, [id])
-
+    // 发布信息改变事件
     useEffect(() => {
         PubSub.subscribe(Pubsub.CHANGE_MESSAGE, () => {
             IndexedDB.async(
@@ -60,6 +61,7 @@ function Content() {
         contentScrollFlag && down()
     }, [messageData])
 
+    // 监听ws信息事件
     useEffect(() => {
         Ws.ws?.addEventListener('message', handle)
 
@@ -67,76 +69,39 @@ function Content() {
             const { type, data: datas } = JSON.parse(e.data)
             switch (type) {
                 case MessageType.TEXT:
-                    IndexedDB.async(
-                        () => {
-                            const { data, name, imageUrl, date, id: textId } = datas
-                            IndexedDB.putDataToTargetObjectStore(
-                                Tabel.MESSAGE,
-                                id,
-                                (prevData, next) => {
-                                    prevData.push({
-                                        id: textId,
-                                        data,
-                                        name,
-                                        imageUrl,
-                                        date,
-                                        target: false,
-                                        type: MessageType.TEXT
-                                    })
-                                    next(prevData)
-                                    setMessageData(prevData)
-                                }
-                            )
-                        }
-                    )
+                    changeMessage(MessageType.TEXT, { ...datas, target: false })
                     break
                 case MessageType.IMAGE:
-                    IndexedDB.async(
-                        () => {
-                            const { data, name, imageUrl, date, id: imageId } = datas
-                            IndexedDB.putDataToTargetObjectStore(
-                                Tabel.MESSAGE,
-                                id,
-                                (prevData, next) => {
-                                    prevData.push({
-                                        id: imageId,
-                                        data,
-                                        name,
-                                        imageUrl,
-                                        date,
-                                        target: false,
-                                        type: MessageType.IMAGE
-                                    })
-                                    next(prevData)
-                                    setMessageData(prevData)
-                                }
-                            )
-                        }
-                    )
+                    changeMessage(MessageType.IMAGE, { ...datas, target: false })
                     break
                 case MessageType.ENTER:
-                    IndexedDB.async(
-                        () => {
-                            const { name, date, id: enterId } = datas
-                            IndexedDB.putDataToTargetObjectStore(
-                                Tabel.MESSAGE,
-                                id,
-                                (prevData, next) => {
-                                    prevData.push({
-                                        id: enterId,
-                                        name,
-                                        date,
-                                        type: MessageType.ENTER
-                                    })
-                                    next(prevData)
-                                    setMessageData(prevData)
-                                }
-                            )
-                        }
-                    )
+                    changeMessage(MessageType.ENTER, datas)
                     break
                 default:
                     break
+            }
+
+            function changeMessage(
+                messageType: MessageType,
+                datas: { id: string, [propName: string]: any }
+            ): void {
+                IndexedDB.async(
+                    () => {
+                        IndexedDB.putDataToTargetObjectStore(
+                            Tabel.MESSAGE,
+                            id,
+                            (prevData, next) => {
+                                console.log(prevData)
+                                prevData.push({
+                                    ...datas,
+                                    type: messageType
+                                })
+                                next(prevData)
+                                setMessageData(prevData)
+                            }
+                        )
+                    }
+                )
             }
         }
 
@@ -169,7 +134,7 @@ function Content() {
                         }
                         case MessageType.IMAGE: {
                             // const { id, target, name, imageUrl, data, date } = item as TextProps
-                            const { id, target, name, imageUrl, data } = item as TextProps
+                            const { id, target, name, imageUrl, data } = item as ImageProps
                             const info = { target, name, imageUrl, data }
                             return <Image key={id} {...info} loading={down} />
                         }

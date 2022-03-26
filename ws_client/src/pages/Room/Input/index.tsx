@@ -31,7 +31,10 @@ function Input() {
     // 弹窗组件
     const popUpRef = useRef<IPopUpRef>(null)
     const [popUpMode, setPopUpMode] = useState<PopUpMode | ''>('')
+    // 输入组件
+    const inputRef = useRef<any>(null)
 
+    // 输入框文本改变
     const inputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         if (e.target.value) {
             setSendFlag(true)
@@ -40,6 +43,7 @@ function Input() {
         }
         setMessage(e.target.value)
     }
+    // 发送
     const send = (e: any) => {
         e.preventDefault()
         if (!flag) return
@@ -85,6 +89,14 @@ function Input() {
             }
         )
     }
+    // 按住录音
+    const recordingDown = () => {
+        console.log(555)
+    }
+    // 松开发送录音
+    const recordingUp = () => {
+        console.log(666)
+    }
 
     const PMode = useMemo(() => {
         switch (popUpMode) {
@@ -110,31 +122,45 @@ function Input() {
     return (
         <>
             <div className='input'>
+                {/* 左按钮 */}
                 <div className='input-left'>
                     <div
                         className='iconfont sound'
                         dangerouslySetInnerHTML={{ __html: isFont ? '&#xe77b;' : '&#xe675;' }}
-                        onClick={() => setIsFont(!isFont)}
+                        onClick={() => {
+                            setIsFont(!isFont)
+                            !isFont && inputRef.current!.focus()
+                        }}
                     ></div>
                 </div>
+                {/* 操作栏 */}
                 <TextArea
                     className='textarea'
+                    style={{ position: isFont ? 'static' : 'absolute', bottom: isFont ? 0 : 10000 }}
                     size='large'
                     autoSize={{ minRows: 1, maxRows: 5 }}
                     maxLength={200}
                     value={message}
                     onChange={inputChange}
                     onPressEnter={send}
+                    ref={inputRef}
                 />
+                <div
+                    className='recording'
+                    style={{ position: isFont ? 'absolute' : 'static', bottom: isFont ? 10000 : 0 }}
+                    onMouseDown={recordingDown}
+                    onMouseUp={recordingUp}
+                >按住&nbsp;说话</div>
+                {/* 右按钮 */}
                 <div className='input-right'>
                     <div
                         className='iconfont'
-                        onMouseDown={(e) => { e.stopPropagation(); popUpRef.current?.open(); setPopUpMode(PopUpMode.EMOJI) }}
+                        onMouseDown={(e) => { e.stopPropagation(); popUpRef.current?.open(); setPopUpMode(PopUpMode.EMOJI); setIsFont(true) }}
                     >&#xe67e;</div>
                     <div
                         style={sendFlag ? { width: 0, visibility: 'hidden', opacity: 0 } : {}}
                         className='iconfont add'
-                        onMouseDown={(e) => { e.stopPropagation(); popUpRef.current?.open(); setPopUpMode(PopUpMode.ADD) }}
+                        onMouseDown={(e) => { e.stopPropagation(); popUpRef.current?.open(); setPopUpMode(PopUpMode.ADD); setIsFont(true) }}
                     >&#xe664;</div>
                     <div
                         style={sendFlag ? {} : { width: 0, visibility: 'hidden', opacity: 0 }}
@@ -144,6 +170,7 @@ function Input() {
                     >发送</div>
                 </div>
             </div>
+            {/* 下拉框 */}
             <PopUp ref={popUpRef} children={PMode} closeCallback={popUpCloseCallback} />
         </>
     )

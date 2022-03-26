@@ -103,7 +103,7 @@ class IndexedDB {
             tabelTag,
             keyPath,
             (e) => {
-                handle(e.target.result?.data, (data) => {
+                handle(e.target.result?.data ?? [], (data) => {
                     const db = this.indexedDB.result
                     const request = db.transaction([tabelTag], action)
                         .objectStore(tabelTag)
