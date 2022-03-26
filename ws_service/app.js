@@ -28,6 +28,9 @@ wss.on('connection', (ws) => {
             case Event.IMAGE:
                 imageHandle(ws, data)
                 break
+            case Event.RECORD:
+                recordHandle(ws, data)
+                break
             case Event.COUNT:
                 countHandle(count)
                 break
@@ -126,6 +129,21 @@ function imageHandle(target, data) {
         if (ws !== target) {
             ws.send(sendTemp(
                 Event.IMAGE,
+                {
+                    ...data,
+                    name: target.name,
+                    imageUrl: target.imageUrl
+                }
+            ))
+        }
+    })
+}
+// 录音信息
+function recordHandle(target, data) {
+    wss.clients.forEach(ws => {
+        if (ws !== target) {
+            ws.send(sendTemp(
+                Event.RECORD,
                 {
                     ...data,
                     name: target.name,

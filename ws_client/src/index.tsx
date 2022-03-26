@@ -1,12 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { message } from 'antd'
+import { isMobile } from 'hym-utils-js'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import zoomerang from 'utils/zoomerang'
 import './cesium.config'
 import 'antd/dist/antd.css'
 import 'assets/style/base.css'
+
+window.isMobile = isMobile()
 
 message.config({
   maxCount: 1

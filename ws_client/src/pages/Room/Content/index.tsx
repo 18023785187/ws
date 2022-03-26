@@ -5,13 +5,14 @@ import { useEffect, useState, useRef, useLayoutEffect, useCallback } from 'react
 import PubSub from 'pubsub-js'
 import Text from './Text'
 import Image from './Image'
+import Record from './Record'
 import Enter from './Enter'
 import MessageType from '@/constants/messageType'
 import Pubsub from '@/constants/pubsub'
 import Ws from 'utils/ws'
 import IndexedDB, { Tabel } from '@/utils/indexedDB'
 import { USER_INFO } from '@/constants/sessionStorage'
-import type { TextProps, ImageProps, EnterProps } from './typings'
+import type { TextProps, ImageProps, RecordProps, EnterProps } from './typings'
 
 let timer: number
 let contentScrollFlag: boolean = true
@@ -74,6 +75,9 @@ function Content() {
                 case MessageType.IMAGE:
                     changeMessage(MessageType.IMAGE, { ...datas, target: false })
                     break
+                case MessageType.RECORD:
+                    changeMessage(MessageType.RECORD, { ...datas, target: false })
+                    break
                 case MessageType.ENTER:
                     changeMessage(MessageType.ENTER, datas)
                     break
@@ -91,7 +95,6 @@ function Content() {
                             Tabel.MESSAGE,
                             id,
                             (prevData, next) => {
-                                console.log(prevData)
                                 prevData.push({
                                     ...datas,
                                     type: messageType
@@ -137,6 +140,12 @@ function Content() {
                             const { id, target, name, imageUrl, data } = item as ImageProps
                             const info = { target, name, imageUrl, data }
                             return <Image key={id} {...info} loading={down} />
+                        }
+                        case MessageType.RECORD: {
+                            // const { id, target, name, imageUrl, data, date } = item as TextProps
+                            const { id, target, name, imageUrl, data } = item as RecordProps
+                            const info = { target, name, imageUrl, data }
+                            return <Record key={id} {...info} />
                         }
                         case MessageType.ENTER: {
                             // const { name, date, id } = item as EnterProps

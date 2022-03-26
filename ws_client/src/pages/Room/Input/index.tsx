@@ -1,7 +1,7 @@
 /**
  * 输入组件
  */
-import { useRef, useState, ChangeEvent, useMemo, useCallback } from 'react'
+import { useRef, useState, ChangeEvent, useMemo, useCallback, useEffect } from 'react'
 import { Input as AntdInput, message as antdMessage } from 'antd'
 import PubSub from 'pubsub-js'
 import { v4 } from 'uuid'
@@ -13,6 +13,8 @@ import Pubsub from '@/constants/pubsub'
 import PopUp, { IPopUpRef } from './PopUp'
 import Emoji from './Emoji'
 import Add from './AddExtend'
+import Recording, { IRecordingRef } from './Recording'
+import recordPlugin from './plugins/record-plugin'
 
 enum PopUpMode {
     EMOJI = 'emoji',
@@ -33,6 +35,10 @@ function Input() {
     const [popUpMode, setPopUpMode] = useState<PopUpMode | ''>('')
     // 输入组件
     const inputRef = useRef<any>(null)
+    // 音频组件
+    const recordRef = useRef<HTMLDivElement>(null)
+    const [mediaRecorderHandler, setMediaRecorderHandler] = useState<{ start: () => void, commit: () => void, discommit: () => void } | null>(null)
+    const recordingRef = useRef<IRecordingRef>(null)
 
     // 输入框文本改变
     const inputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -89,14 +95,24 @@ function Input() {
             }
         )
     }
-    // 按住录音
-    const recordingDown = () => {
-        console.log(555)
-    }
-    // 松开发送录音
-    const recordingUp = () => {
-        console.log(666)
-    }
+    // 录音处理
+    useEffect(() => {
+        recordPlugin((mediaRecorderHandler) => {
+            recordRef.current?.addEventListener('mousedown', () => {
+                if (!window.isMobile) {
+                    mediaRecorderHandler.start()
+                    recordingRef.current?.open()
+                }
+            })
+            recordRef.current?.addEventListener('touchstart', () => {
+                if (window.isMobile) {
+                    mediaRecorderHandler.start()
+                    recordingRef.current?.open()
+                }
+            })
+            setMediaRecorderHandler(mediaRecorderHandler)
+        })
+    }, [])
 
     const PMode = useMemo(() => {
         switch (popUpMode) {
@@ -118,6 +134,14 @@ function Input() {
     const popUpCloseCallback = useCallback(() => {
         setPopUpMode('')
     }, [])
+
+    // 录音弹窗处理
+    const commit = useCallback(() => {
+        mediaRecorderHandler?.commit()
+    }, [mediaRecorderHandler])
+    const discommit = useCallback(() => {
+        mediaRecorderHandler?.discommit()
+    }, [mediaRecorderHandler])
 
     return (
         <>
@@ -146,11 +170,11 @@ function Input() {
                     ref={inputRef}
                 />
                 <div
+                    ref={recordRef}
                     className='recording'
                     style={{ position: isFont ? 'absolute' : 'static', bottom: isFont ? 10000 : 0 }}
-                    onMouseDown={recordingDown}
-                    onMouseUp={recordingUp}
                 >按住&nbsp;说话</div>
+                <Recording ref={recordingRef} commit={commit} discommit={discommit} />
                 {/* 右按钮 */}
                 <div className='input-right'>
                     <div

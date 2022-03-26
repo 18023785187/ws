@@ -17,6 +17,15 @@ interface ImageProps {
     date: number
 }
 
+interface RecordProps {
+    id: string,
+    target: boolean,
+    name: string,
+    imageUrl: string | null,
+    data: string,
+    date: number
+}
+
 interface EnterProps {
     id: string,
     name: string,
@@ -26,5 +35,6 @@ interface EnterProps {
 export type {
     TextProps,
     ImageProps,
-    EnterProps
+    RecordProps,
+    EnterProps,
 }
