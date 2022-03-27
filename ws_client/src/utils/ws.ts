@@ -1,4 +1,5 @@
 import { message } from 'antd'
+import IndexedDB, { Tabel } from '@/utils/indexedDB'
 import { WS_SERVICE_URL, CONNECT_TOKEN, DISCONNECT, USER_INFO } from '@/constants/sessionStorage'
 
 enum WsEvent {
@@ -7,6 +8,7 @@ enum WsEvent {
     IMAGE = 'image', // 图片
     RECORD = 'record', // 录音
     COUNT = 'count', // 人数
+    HEARTBEAT = 'heartbeat', // 心跳检测
 }
 
 class Ws {
@@ -19,7 +21,7 @@ class Ws {
                 (e) => {
                     console.log('websocket连接成功')
                     const user_info = window.sessionStorage.getItem(USER_INFO)
-                    if(user_info) {
+                    if (user_info) {
                         this.connectSend(JSON.parse(user_info))
                     }
                 },
@@ -61,6 +63,27 @@ class Ws {
                     })
                 }
                 this.ws = undefined
+            })
+            // 心跳检测
+            this.ws?.addEventListener('message', (e) => {
+                const { type, data } = JSON.parse(e.data)
+                const { userIdList } = data
+                if (type === WsEvent.HEARTBEAT) {
+                    IndexedDB.async(
+                        () => {
+                            IndexedDB.getAllKeyToTargetObjectStore(
+                                Tabel.MESSAGE,
+                                (tabel) => {
+                                    tabel.forEach(userId => {
+                                        if(!userIdList.includes(userId)) {
+                                            IndexedDB.deleteDataToTargetObjectStore(Tabel.MESSAGE, userId)
+                                        }
+                                    })
+                                }
+                            )
+                        }
+                    )
+                }
             })
             this.ws = ws
             onResolve ? onResolve(e) : (() => { })()

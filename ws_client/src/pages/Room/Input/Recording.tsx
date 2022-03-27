@@ -21,9 +21,7 @@ export default memo(forwardRef<IRecordingRef, IProps>(
         useImperativeHandle(ref, () => ({
             open: () => {
                 setOpen(true)
-                window.setTimeout(() => {
-                    setIsCommit(true)
-                }, 100)
+                setIsCommit(true)
             }
         }))
 
@@ -48,12 +46,12 @@ export default memo(forwardRef<IRecordingRef, IProps>(
                 window.removeEventListener('touchend', handleTouch)
                 window.removeEventListener('mouseup', handleMouse)
             }
-        })
+        }, [isCommit, open])
 
         return (
             <div
                 className={`recording-show discommit no-select ${isCommit ? '' : 'high-discommit'}`}
-                style={{ top: open ? '0' : '100%' }}
+                style={{ zIndex: open ? '9' : '-9' }}
                 onMouseMove={() => setIsCommit(false)}
                 onTouchMove={() => setIsCommit(false)}
             >
@@ -61,8 +59,9 @@ export default memo(forwardRef<IRecordingRef, IProps>(
                 <p className='iscommit'>松开 {isCommit ? '发送' : '取消'}</p>
                 <div
                     className={`commit ${isCommit ? '' : 'high-commit'}`}
+                    style={{ top: open ? '77%' : '100%' }}
                     onMouseMove={(e) => { e.stopPropagation(); setIsCommit(true) }}
-                    onTouchMove={(e) => { e.stopPropagation(); setIsCommit(true) }}
+                    onMouseEnter={(e) => { e.stopPropagation(); setIsCommit(true) }}
                 >
                     <p className='iconfont voice-icon'>&#xe604;</p>
                 </div>

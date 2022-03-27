@@ -62,6 +62,39 @@ https://ws-eight.vercel.app/
 1. 该聊天室使用websocket协议，对于http协议请使用ws协议，https协议使用wss协议。
 2. 对于聊天记录存储使用的是indexedDB。
 
+##### 项目用到许多Blob转base64需要确认格式，在此附上MIME
+
+Mime-Types(mime类型) |	Dateiendung(扩展名) | Bedeutung
+ ---- | ----- | ------ 
+application/msexcel | *.xls *.xla |	Microsoft Excel Dateien
+application/mshelp | *.hlp *.chm | Microsoft Windows Hilfe Dateien
+application/mspowerpoint | *.ppt *.ppz *.pps *.pot | Microsoft Powerpoint Dateien
+application/msword | *.doc *.dot | Microsoft Word Dateien
+application/octet-stream | *.exe |	exe
+application/pdf | *.pdf | Adobe PDF-Dateien
+application/post****** | *.ai *.eps *.ps | Adobe Post******-Dateien
+application/rtf | *.rtf | Microsoft RTF-Dateien
+application/x-httpd-php | *.php *.phtml | PHP-Dateien
+application/x-java****** | *.js | serverseitige Java******-Dateien
+application/x-shockwave-flash | *.swf *.cab | Flash Shockwave-Dateien
+application/zip | *.zip | ZIP-Archivdateien
+audio/basic | *.au *.snd | Sound-Dateien
+audio/mpeg | *.mp3 | MPEG-Dateien
+audio/x-midi | *.mid *.midi	| MIDI-Dateien
+audio/x-mpeg | *.mp2 | MPEG-Dateien
+audio/x-wav | *.wav | Wav-Dateien
+image/gif | *.gif | GIF-Dateien
+image/jpeg | *.jpeg *.jpg *.jpe | JPEG-Dateien
+image/x-windowdump | *.xwd | X-Windows Dump
+text/css | *.css | CSS Stylesheet-Dateien
+text/html | *.htm *.html *.shtml | -Dateien
+text/java****** | *.js | Java******-Dateien
+text/plain | *.txt | reine Textdateien
+video/mpeg | *.mpeg *.mpg *.mpe | MPEG-Dateien
+video/vnd.rn-realvideo | *.rmvb	| realplay-Dateien
+video/quicktime | *.qt *.mov | Quicktime-Dateien
+video/vnd.vivo | *viv *.vivo | Vivo-Dateien
+
 #### 🖖 效果展示
 <img src='./docs/home.png'>
 <img src='./docs/setting.png'>

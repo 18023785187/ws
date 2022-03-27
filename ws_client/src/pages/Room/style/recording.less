@@ -1,15 +1,16 @@
 .recording-show() {
     position: fixed;
-    top: 100%;
-    width: 100vw;
-    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     color: #fff;
     background-color: rgba(0, 0, 0, .7);
     transition: all .1s;
 
     .cancel-icon {
         position: absolute;
-        top: 60vh;
+        top: 57vh;
         left: 50%;
         transform: translate3d(-50%, 0, 0);
         font-size: 7vw;
@@ -18,7 +19,7 @@
 
     .iscommit {
         position: absolute;
-        top: 71vh;
+        top: 69vh;
         left: 0;
         right: 0;
         text-align: center;
@@ -28,9 +29,10 @@
     .commit {
         position: absolute;
         top: 77%;
-        transform: translate3d(-33%, 0, 0);
-        width: 300vw;
-        height: 300vw;
+        left: 50%;
+        transform: translate3d(-50%, 0, 0);
+        width: 200vh;
+        height: 200vh;
         border-radius: 50%;
         border: 1vw solid #fff;
         background-color: #eee;
@@ -39,7 +41,7 @@
         .voice-icon {
             position: absolute;
             top: 10vw;
-            left: 150vw;
+            left: 50%;
             transform: translate3d(-50%, 0, 0);
             font-size: 7vw;
         }

@@ -137,6 +137,30 @@ class IndexedDB {
         request.onerror = error
     }
     /**
+     * 获取某个表所有主键
+     * @param tabelTag 表名
+     * @param handle 处理函数
+     */
+    public getAllKeyToTargetObjectStore(
+        tabelTag: string,
+        handle: (data: string[]) => void = () => { },
+    ): void {
+        const db = this.indexedDB.result
+        const objectStore = db.transaction(tabelTag).objectStore(tabelTag)
+        const data: string[] = []
+
+        objectStore.openCursor().onsuccess = function (event) {
+            const cursor = this.result
+
+            if (cursor) {
+                data.push(cursor.key as string)
+                cursor.continue()
+            } else {
+                handle(data)
+            }
+        }
+    }
+    /**
      * 获取某个表某条数据
      * @param tabelTag 表名
      * @param keyPath 主键值

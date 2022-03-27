@@ -11,6 +11,7 @@ const server = http.createServer(app)
 const wss = new WebSocket.Server({
     server
 })
+const userIdSet = new Set()
 
 wss.on('connection', (ws) => {
     // 监听客户端发来的消息
@@ -48,9 +49,35 @@ wss.on('connection', (ws) => {
                 ++count
             }
         })
+        // 用户断开连接，将会有30秒保活时间
+        const iid = ws.iid
+        setTimeout(() => {
+            let flag = true
+            wss.clients.forEach(ws => {
+                if(ws.iid === iid) {
+                    flag = false
+                }
+            })
+            if(flag) {
+                userIdSet.delete(iid)
+                console.log(`id:${iid} close`)
+            }
+        }, 30000)
         countHandle(count)
     })
 })
+
+// 服务器启动的每30秒都会发送在线人员名单给客户端核对已删除不在线人员的聊天数据
+setInterval(() => {
+    wss.clients.forEach(ws => {
+        ws.send(sendTemp(
+            Event.HEARTBEAT,
+            {
+                userIdList: [...userIdSet]
+            }
+        ))
+    })
+}, 30000)
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'public/index.html'))
@@ -87,6 +114,8 @@ function connectHandle(target, data) {
             id
         }
     ))
+    console.log(`id:${id} connect`)
+    userIdSet.add(id)
     target.iid = id
     target.name = name
     target.imageUrl = imageUrl

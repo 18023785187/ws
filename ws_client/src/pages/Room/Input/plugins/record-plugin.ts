@@ -37,48 +37,52 @@ function recordPlugin(
                     chunks.push(e.data)
                 }
                 mediaRecorder.onstop = e => {
-                    if(!flag) {
+                    if (!flag) {
                         chunks.length = 0
                         return
                     }
-                    const blob = new Blob(chunks)
+                    const blob = new Blob(chunks, { type: "audio/mpeg" })
                     chunks.length = 0
-                    const audioURL = window.URL.createObjectURL(blob)
-
-                    // 录完音发送信息
-                    const recordId = v4()
-                    IndexedDB.async(
-                        () => {
-                            const date = Date.now()
-                            const user_info = JSON.parse(window.sessionStorage.getItem(USER_INFO)!)
-                            IndexedDB.putDataToTargetObjectStore(
-                                Tabel.MESSAGE,
-                                user_info.id,
-                                (prevData, next) => {
-                                    prevData.push({
-                                        type: MessageType.RECORD,
-                                        target: true,
-                                        ...user_info,
-                                        id: recordId,
-                                        data: audioURL,
-                                        date
-                                    })
-                                    next(prevData)
-                                },
-                                () => {
-                                    Ws.ws?.send(JSON.stringify({
-                                        type: WsEvent.RECORD,
-                                        data: {
+                    const fr = new FileReader()
+                    console.log(fr)
+                    fr.readAsDataURL(blob)
+                    fr.onload = function (e) {
+                        const audioURL = e.target!.result
+                        // 录完音发送信息
+                        const recordId = v4()
+                        IndexedDB.async(
+                            () => {
+                                const date = Date.now()
+                                const user_info = JSON.parse(window.sessionStorage.getItem(USER_INFO)!)
+                                IndexedDB.putDataToTargetObjectStore(
+                                    Tabel.MESSAGE,
+                                    user_info.id,
+                                    (prevData, next) => {
+                                        prevData.push({
+                                            type: MessageType.RECORD,
+                                            target: true,
+                                            ...user_info,
                                             id: recordId,
                                             data: audioURL,
                                             date
-                                        }
-                                    }))
-                                    PubSub.publish(Pubsub.CHANGE_MESSAGE)
-                                }
-                            )
-                        }
-                    )
+                                        })
+                                        next(prevData)
+                                    },
+                                    () => {
+                                        Ws.ws?.send(JSON.stringify({
+                                            type: WsEvent.RECORD,
+                                            data: {
+                                                id: recordId,
+                                                data: audioURL,
+                                                date
+                                            }
+                                        }))
+                                        PubSub.publish(Pubsub.CHANGE_MESSAGE)
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
             },
             () => {

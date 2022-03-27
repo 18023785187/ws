@@ -9,6 +9,7 @@ const Event = {
     RECORD: 'record', // 录音信息
     COUNT: 'count', // 人数
     ENTER: 'enter', // 进入
+    HEARTBEAT: 'heartbeat', // 心跳检测
 }
 
 module.exports = Event
