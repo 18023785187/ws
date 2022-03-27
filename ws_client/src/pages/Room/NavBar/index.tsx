@@ -101,8 +101,8 @@ function NavBar() {
                     <div className="right-icon-line-3" style={settingStyle[2]}></div>
                 </div>
                 <div className='nav-pop-up' style={flag ? { transform: 'scale(0, 0)' } : {}} onMouseDown={(e) => e.stopPropagation()}>
-                    <div className='nav-pop-up-item' onClick={mode}>{darkmode ? '白天模式' : '黑夜模式'}</div>
-                    <div className='nav-pop-up-item' onClick={exit}>退出房间</div>
+                    <div className='nav-pop-up-item iconfont' onClick={mode} dangerouslySetInnerHTML={{ __html: darkmode ? '&#xe698; 白天模式' : '&#xe69a; 黑夜模式' }}></div>
+                    <div className='nav-pop-up-item iconfont' onClick={exit} dangerouslySetInnerHTML={{ __html: '&#xe67b; 退出房间' }}></div>
                 </div>
             </div>
         </div>

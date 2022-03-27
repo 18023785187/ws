@@ -3,6 +3,7 @@
 body {
     width: 100vw;
     height: 100vh;
+    box-sizing: border-box;
 }
 
 /*
@@ -15,6 +16,9 @@ body {
     clear: both;
 }
 
+/*
+    滚动条样式
+*/
 *::-webkit-scrollbar {
     width: .5vw;
     background-color: transparent;
@@ -30,4 +34,14 @@ body {
 
 *::-webkit-scrollbar-thumb:hover {
     background-color: #666;
+}
+
+/*
+    禁止元素被选中
+*/
+.no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

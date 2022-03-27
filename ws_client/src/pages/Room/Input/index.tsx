@@ -147,7 +147,7 @@ function Input() {
         <>
             <div className='input'>
                 {/* 左按钮 */}
-                <div className='input-left'>
+                <div className='input-left no-select'>
                     <div
                         className='iconfont sound'
                         dangerouslySetInnerHTML={{ __html: isFont ? '&#xe77b;' : '&#xe675;' }}
@@ -171,12 +171,12 @@ function Input() {
                 />
                 <div
                     ref={recordRef}
-                    className='recording'
+                    className='recording no-select'
                     style={{ position: isFont ? 'absolute' : 'static', bottom: isFont ? 10000 : 0 }}
                 >按住&nbsp;说话</div>
                 <Recording ref={recordingRef} commit={commit} discommit={discommit} />
                 {/* 右按钮 */}
-                <div className='input-right'>
+                <div className='input-right no-select'>
                     <div
                         className='iconfont'
                         onMouseDown={(e) => { e.stopPropagation(); popUpRef.current?.open(); setPopUpMode(PopUpMode.EMOJI); setIsFont(true) }}

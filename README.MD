@@ -5,39 +5,32 @@
 PS：目前正在开发阶段，预计实现功能：
 1. 发送文本（完成）。
 2. 发送图片（完成）。
-3. 发送语音。
+3. 发送语音（完成）。
 4. 语音通话。
 5. 视频通话。
-6. 夜间模式（完成）。
-7. 入群提示（完成）。
-8. 消息提示。
+6. 发送位置。
+7. 夜间模式（完成）。
+8. 入群提示（完成）。
+9. 消息提示。
 
 #### 🚦 启动服务
 
 ```
-git clone https://github.com/18023785187/ws.git
+$ git clone https://github.com/18023785187/ws.git
 ```
 
 启动浏览器服务
 ```
-cd ws_client
-```
-```
-npm install
-```
-```
-npm run start
+$ cd ws_client
+$ npm install
+$ npm run start
 ```
 
 启动服务器服务
 ```
-cd ws_service
-```
-```
-npm install
-```
-```
-npm run start
+$ cd ws_service
+$ npm install
+$ npm run start
 ```
 
 #### 🛠️ 远程聊天ngrok
@@ -62,7 +55,6 @@ https://ws-eight.vercel.app/
 1. 找到生成的ngrok.yml `C:\Users\用户/.ngrok2/ngrok.yml`。
 2. 修改ngrok.yml。
 3. 在终端执行命令 `ngrok start --all(启动所有端口)` 或 `ngrok start tunnel1 tunnel2 (启动指定端口)`。
-
 <img src='./docs/ngrok-config.png'>
 
 #### 📄 说明

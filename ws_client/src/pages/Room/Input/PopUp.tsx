@@ -39,7 +39,7 @@ export default memo(forwardRef<IPopUpRef, IProps>(
 
         return (
             <div
-                className="pop-up"
+                className="pop-up no-select"
                 style={open ? { height: '40vh' } : { height: '0' }}
                 onMouseDown={(e) => e.stopPropagation()}
             >

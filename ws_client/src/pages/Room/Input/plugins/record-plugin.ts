@@ -37,7 +37,10 @@ function recordPlugin(
                     chunks.push(e.data)
                 }
                 mediaRecorder.onstop = e => {
-                    if(!flag) return
+                    if(!flag) {
+                        chunks.length = 0
+                        return
+                    }
                     const blob = new Blob(chunks)
                     chunks.length = 0
                     const audioURL = window.URL.createObjectURL(blob)

@@ -5,7 +5,25 @@
     height: 100vh;
     color: #fff;
     background-color: rgba(0, 0, 0, .7);
-    transition: top .1s;
+    transition: all .1s;
+
+    .cancel-icon {
+        position: absolute;
+        top: 60vh;
+        left: 50%;
+        transform: translate3d(-50%, 0, 0);
+        font-size: 7vw;
+        color: #eee;
+    }
+
+    .iscommit {
+        position: absolute;
+        top: 71vh;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 4vw;
+    }
 
     .commit {
         position: absolute;
@@ -16,5 +34,31 @@
         border-radius: 50%;
         border: 1vw solid #fff;
         background-color: #eee;
+        transition: all .1s;
+
+        .voice-icon {
+            position: absolute;
+            top: 10vw;
+            left: 150vw;
+            transform: translate3d(-50%, 0, 0);
+            font-size: 7vw;
+        }
+    }
+
+    .high-commit {
+        background-color: rgba(0, 0, 0, .7) !important;
+
+        .voice-icon {
+            color: #fff !important;
+        }
+    }
+}
+
+.high-discommit() {
+    color: #666 !important;
+    background-color: rgba(238, 238, 238, .7) !important;
+
+    .cancel-icon {
+        color: #666 !important;
     }
 }

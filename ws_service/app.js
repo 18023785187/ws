@@ -58,7 +58,8 @@ app.get('/', function (req, res) {
 
 //监听端口
 const port = process.env.PORT || 8000
-const host = getNetworkIp()
+// const host = getNetworkIp()
+const host = 'localhost'
 server.listen(port, host, () => {
     console.log(`服务器跑起来了~ @ http://${host}:${port}`)
 })

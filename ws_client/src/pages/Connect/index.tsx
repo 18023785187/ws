@@ -64,6 +64,10 @@ function Connect() {
                     background-size: 80vw 80vw;
                     background-position: 0 -28vw;
                     cursor: pointer;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
                 `,
                 event: {
                     click: [() => (document.getElementsByClassName('darkmode-toggle')[0] as HTMLElement)?.click()]

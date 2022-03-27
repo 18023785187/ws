@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "445237",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e67b",
+      "unicode_decimal": 59003
+    },
+    {
+      "icon_id": "6970021",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e6fe",
+      "unicode_decimal": 59134
+    },
+    {
+      "icon_id": "10995713",
+      "name": "194音量、喇叭、声音",
+      "font_class": "yinlianglabashengyin",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
       "icon_id": "145697",
       "name": "地标_填充",
       "font_class": "dibiaotianchong",
