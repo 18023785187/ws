@@ -10,6 +10,7 @@ const Event = {
     COUNT: 'count', // 人数
     ENTER: 'enter', // 进入
     HEARTBEAT: 'heartbeat', // 心跳检测
+    SHOW_MEMBER: 'show_member', // 所有人信息
 }
 
 module.exports = Event

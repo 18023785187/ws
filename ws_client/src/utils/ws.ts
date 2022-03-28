@@ -9,6 +9,7 @@ enum WsEvent {
     RECORD = 'record', // 录音
     COUNT = 'count', // 人数
     HEARTBEAT = 'heartbeat', // 心跳检测
+    SHOW_MEMBER = 'show_member', // 获取所有人信息
 }
 
 class Ws {

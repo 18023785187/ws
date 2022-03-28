@@ -35,6 +35,9 @@ wss.on('connection', (ws) => {
             case Event.COUNT:
                 countHandle(count)
                 break
+            case Event.SHOW_MEMBER:
+                memberHandle()
+                break
             default:
                 break
         }
@@ -54,16 +57,17 @@ wss.on('connection', (ws) => {
         setTimeout(() => {
             let flag = true
             wss.clients.forEach(ws => {
-                if(ws.iid === iid) {
+                if (ws.iid === iid) {
                     flag = false
                 }
             })
-            if(flag) {
+            if (flag) {
                 userIdSet.delete(iid)
                 console.log(`id:${iid} close`)
             }
         }, 30000)
         countHandle(count)
+        memberHandle()
     })
 })
 
@@ -137,6 +141,8 @@ function connectHandle(target, data) {
     })
     // 广播人数
     countHandle(count)
+    // 发送在线人员
+    memberHandle()
 }
 // 处理文本信息
 function textHandle(target, data) {
@@ -190,6 +196,26 @@ function countHandle(curCount) {
         ws.send(sendTemp(
             Event.COUNT,
             count
+        ))
+    })
+}
+// 发送全员信息
+function memberHandle() {
+    const userInfoList = []
+    wss.clients.forEach(ws => {
+        if (ws.name) {
+            userInfoList.push({
+                name: ws.name,
+                imageUrl: ws.imageUrl
+            })
+        }
+    })
+    wss.clients.forEach(ws => {
+        ws.send(sendTemp(
+            Event.SHOW_MEMBER,
+            {
+                userInfoList
+            }
         ))
     })
 }
