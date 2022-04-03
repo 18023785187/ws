@@ -24,7 +24,7 @@ function Record(props: IProps) {
             <div className='record-message-info'>
                 {target ? '' : <div className='user-name'>{name}</div>}
                 <div className={target ? 'record-message-content-2' : 'record-message-content-1'}>
-                    <audio src={data} controls></audio>
+                    <audio style={{ width: '100%' }} src={data} controls></audio>
                 </div>
             </div>
         </div>

@@ -40,7 +40,7 @@ export default memo(forwardRef<IMemberRef, IProps>(
         }, [])
 
         useEffect(() => {
-            Ws.ws?.send(JSON.stringify({
+            Ws.ws?.readyState === 1 && Ws.ws?.send(JSON.stringify({
                 type: WsEvent.SHOW_MEMBER
             }))
         }, [])

@@ -70,7 +70,9 @@ function Connect() {
                     user-select: none;
                 `,
                 event: {
-                    click: [() => (document.getElementsByClassName('darkmode-toggle')[0] as HTMLElement)?.click()]
+                    click: [() => {
+                        (document.getElementsByClassName('darkmode-toggle')[0] as HTMLElement)?.click()
+                    }]
                 }
             }
         )

@@ -6,13 +6,10 @@ PS：目前正在开发阶段，预计实现功能：
 1. 发送文本（完成）。
 2. 发送图片（完成）。
 3. 发送语音（完成）。
-4. 语音通话。
-5. 视频通话。
-6. 发送位置。
-7. 夜间模式（完成）。
-8. 入群提示（完成）。
-9. 消息提示。
-10. 查看所有群成员（完成）。
+4. 夜间模式（完成）。
+5. 入群提示（完成）。
+6. 消息提示（完成）。
+7. 查看所有群成员（完成）。
 
 #### 🚦 启动服务
 
@@ -101,3 +98,10 @@ video/vnd.vivo | *viv *.vivo | Vivo-Dateien
 <img src='./docs/setting.png'>
 <img src='./docs/room.png'>
 <img src='./docs/room-night.png'>
+<img src='./docs/emoji.png'>
+<img src='./docs/plugins.png'>
+<img src='./docs/image.png'>
+<img src='./docs/image-slide.png'>
+<img src='./docs/record.png'>
+<img src='./docs/member.png'>
+<img src='./docs/message.png'>

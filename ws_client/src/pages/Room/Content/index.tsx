@@ -13,6 +13,7 @@ import Ws from 'utils/ws'
 import IndexedDB, { Tabel } from '@/utils/indexedDB'
 import { USER_INFO } from '@/constants/sessionStorage'
 import type { TextProps, ImageProps, RecordProps, EnterProps } from './typings'
+import notification from 'utils/notification'
 
 let timer: number
 let contentScrollFlag: boolean = true
@@ -22,6 +23,8 @@ function Content() {
     const { id } = JSON.parse(window.sessionStorage.getItem(USER_INFO)!)
     // 内容dom
     const ContentRef = useRef<HTMLDivElement>(null)
+    // 浏览器是否最小化
+    const [isDormancy, setIsDormancy] = useState<boolean>(false)
 
     // 初始化时从indexedDB获取信息
     useEffect(() => {
@@ -62,7 +65,7 @@ function Content() {
         contentScrollFlag && down()
     }, [messageData])
 
-    // 监听ws信息事件
+    // 监听ws信息事件, 在视口最小化时增加消息提醒
     useEffect(() => {
         Ws.ws?.addEventListener('message', handle)
 
@@ -70,15 +73,19 @@ function Content() {
             const { type, data: datas } = JSON.parse(e.data)
             switch (type) {
                 case MessageType.TEXT:
+                    isDormancy && notification.message('HYM聊天室', `${datas.name}：${datas.data}`)
                     changeMessage(MessageType.TEXT, { ...datas, target: false })
                     break
                 case MessageType.IMAGE:
+                    isDormancy && notification.message('HYM聊天室', `${datas.name}：[图片]`)
                     changeMessage(MessageType.IMAGE, { ...datas, target: false })
                     break
                 case MessageType.RECORD:
+                    isDormancy && notification.message('HYM聊天室', `${datas.name}：[语音]`)
                     changeMessage(MessageType.RECORD, { ...datas, target: false })
                     break
                 case MessageType.ENTER:
+                    isDormancy && notification.message('HYM聊天室', `${datas.name}进入群聊`)
                     changeMessage(MessageType.ENTER, datas)
                     break
                 default:
@@ -111,7 +118,20 @@ function Content() {
         return () => {
             Ws.ws?.removeEventListener('message', handle)
         }
-    }, [id])
+    }, [id, isDormancy])
+
+    // 浏览器最小化
+    useEffect(() => {
+        document.addEventListener('visibilitychange', handle)
+
+        function handle(): void {
+            document.visibilityState === 'hidden' ? setIsDormancy(true) : setIsDormancy(false)
+        }
+
+        return () => {
+            document.removeEventListener('visibilitychange', handle)
+        }
+    }, [])
 
     const down = useCallback(() => {
         ContentRef.current!.scrollTop = ContentRef.current!.scrollHeight
