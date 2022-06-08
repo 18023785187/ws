@@ -1,83 +1,83 @@
 @import url('./recording.less');
 
 .input() {
+  display: flex;
+  align-items: center;
+  width: 100vw;
+  padding: 2vw 0;
+  background-color: #fefefe;
+  border-top: 1px solid #ddd;
+
+  .input-left {
+    width: 13vw;
+
+    .sound {
+      margin: 0 auto;
+    }
+  }
+
+  .textarea {
+    flex: 1;
+    background-color: #fff;
+    transition: width .5s, height .5s;
+  }
+
+  .recording {
+    flex: 1;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+  }
+
+  .recording-show {
+    .recording-show();
+  }
+
+  .high-discommit {
+    .high-discommit();
+  }
+
+  .input-right {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
-    width: 100vw;
-    padding: 2vw 0;
-    background-color: #fefefe;
-    border-top: 1px solid #ddd;
 
-    .input-left {
-        width: 13vw;
-
-        .sound {
-            margin: 0 auto;
-        }
+    &>* {
+      margin-left: 3vw;
+      transition: all .3s;
     }
 
-    .textarea {
-        flex: 1;
-        background-color: #fff;
-        transition: width .5s, height .5s;
+    .add {
+      margin: 0 0 0 3vw;
     }
 
-    .recording {
-        flex: 1;
-        height: 40px;
-        line-height: 40px;
-        text-align: center;
-        background-color: #fff;
-        border: 1px solid #d9d9d9;
-        border-radius: 2px;
+    .send-btn {
+      width: 18vw;
+      height: 9vw;
+      line-height: 9vw;
+      border-radius: .5vw;
+      margin: 0 3vw 0 0;
+      color: #fff;
+      background-color: #1890ff;
+      font-size: 4vw;
+      text-align: center;
+      cursor: pointer;
+
+      &:hover {
+        color: #fff;
+        background: #40a9ff;
+      }
     }
-    
-    .recording-show {
-        .recording-show();
-    }
+  }
 
-    .high-discommit {
-        .high-discommit();
-    }
-
-    .input-right {
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-
-        &>* {
-            margin-left: 3vw;
-            transition: all .3s;
-        }
-
-        .add {
-            margin: 0 0 0 3vw;
-        }
-
-        .send-btn {
-            width: 18vw;
-            height: 9vw;
-            line-height: 9vw;
-            border-radius: .5vw;
-            margin: 0 3vw 0 0;
-            color: #fff;
-            background-color: #1890ff;
-            font-size: 4vw;
-            text-align: center;
-            cursor: pointer;
-
-            &:hover {
-                color: #fff;
-                background: #40a9ff;
-            }
-        }
-    }
-
-    .iconfont {
-        width: 9vw;
-        height: 9vw;
-        line-height: 9vw;
-        font-size: 9vw;
-        cursor: pointer;
-    }
+  .iconfont {
+    width: 9vw;
+    height: 9vw;
+    line-height: 9vw;
+    font-size: 9vw;
+    cursor: pointer;
+  }
 }

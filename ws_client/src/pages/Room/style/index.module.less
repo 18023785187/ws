@@ -6,37 +6,37 @@
 @import url('./add-extend.less');
 
 .room {
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background-color: rgb(240, 240, 240);
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: rgb(240, 240, 240);
 
-    :global {
-        .nav-bar {
-            .nav-bar();
-        }
-
-        .content {
-            flex: 1;
-            .content();
-        }
-
-        .input {
-            .input();
-        }
-
-        .pop-up {
-            .pop-up();
-        }
-
-        .emoji {
-            .emoji();
-        }
-
-        .add-extend {
-            .add-extend();
-        }
+  :global {
+    .nav-bar {
+      .nav-bar();
     }
+
+    .content {
+      flex: 1;
+      .content();
+    }
+
+    .input {
+      .input();
+    }
+
+    .pop-up {
+      .pop-up();
+    }
+
+    .emoji {
+      .emoji();
+    }
+
+    .add-extend {
+      .add-extend();
+    }
+  }
 }

@@ -1,76 +1,76 @@
 .member() {
-    position: fixed;
-    z-index: 10;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: #f0f0f0;
-    transition: all .2s;
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #f0f0f0;
+  transition: all .2s;
 
-    .member-nav {
-        display: flex;
-        align-items: center;
-        width: 100vw;
-        padding: 1vw 0;
-        border-bottom: 1px solid #ddd;
+  .member-nav {
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    padding: 1vw 0;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    .left,
+    .right {
+      width: 10vw;
+      height: 10vw;
+      line-height: 10vw;
+      font-size: 4vw;
+      cursor: pointer;
+    }
+
+    .center {
+      flex: 1;
+      font-size: 4vw;
+      font-weight: 700;
+    }
+  }
+
+  .member-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    width: 100%;
+    height: 100%;
+    padding: 4vw 0 20vw;
+    overflow: scroll;
+    overflow-x: hidden;
+
+    .user-info {
+      width: 15.2vw;
+      margin-left: 4vw;
+      box-sizing: border-box;
+
+      .user-info-image {
+        width: 15.2vw;
+        height: 15.2vw;
+
+        .user-image {
+          display: block;
+          width: 100%;
+          height: 100%;
+          line-height: 15.2vw;
+          border-radius: 10px;
+        }
+      }
+
+      .user-info-name {
+        line-height: 7vw;
+        font-size: 3vw;
+        color: #999;
         text-align: center;
+        overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-
-        .left,
-        .right {
-            width: 10vw;
-            height: 10vw;
-            line-height: 10vw;
-            font-size: 4vw;
-            cursor: pointer;
-        }
-
-        .center {
-            flex: 1;
-            font-size: 4vw;
-            font-weight: 700;
-        }
+      }
     }
-
-    .member-content {
-        display: flex;
-        flex-wrap: wrap;
-        align-content: flex-start;
-        width: 100%;
-        height: 100%;
-        padding: 4vw 0 20vw;
-        overflow: scroll;
-        overflow-x: hidden;
-
-        .user-info {
-            width: 15.2vw;
-            margin-left: 4vw;
-            box-sizing: border-box;
-            
-            .user-info-image {
-                width: 15.2vw;
-                height: 15.2vw;
-
-                .user-image {
-                    display: block;
-                    width: 100%;
-                    height: 100%;
-                    line-height: 15.2vw;
-                    border-radius: 10px;
-                }
-            }
-
-            .user-info-name {
-                line-height: 7vw;
-                font-size: 3vw;
-                color: #999;
-                text-align: center;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-            }
-        }
-    }
+  }
 }

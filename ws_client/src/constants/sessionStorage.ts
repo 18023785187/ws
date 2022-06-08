@@ -8,8 +8,8 @@ const USER_INFO = 'user_info'
 const DISCONNECT = 'disconnect'
 
 export {
-    WS_SERVICE_URL,
-    CONNECT_TOKEN,
-    USER_INFO,
-    DISCONNECT,
+  WS_SERVICE_URL,
+  CONNECT_TOKEN,
+  USER_INFO,
+  DISCONNECT,
 }

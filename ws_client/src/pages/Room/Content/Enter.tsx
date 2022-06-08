@@ -4,17 +4,17 @@
 import { memo } from 'react'
 
 interface IProps {
-    name: string
+  name: string
 }
 
 function Enter(props: IProps) {
-    const { name } = props
+  const { name } = props
 
-    return (
-        <div className='enter'>
-            {name} 进入群聊
-        </div>
-    )
+  return (
+    <div className='enter'>
+      {name} 进入群聊
+    </div>
+  )
 }
 
 export default memo(Enter)
